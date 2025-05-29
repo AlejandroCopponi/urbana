@@ -48,7 +48,6 @@ body {
     height: 100vh; /* Ocupa toda la altura de la vista */
     display: flex;
     flex-direction: column;
-    /* ANTES: background-color: #333333; */
     background-color: rgba(0, 0, 0, 0.4); /* Nuevo: negro con transparencia */
     backdrop-filter: blur(5px); /* Nuevo: Efecto de desenfoque detrás del contenedor */
     -webkit-backdrop-filter: blur(5px); /* Para compatibilidad con Safari */
@@ -144,13 +143,18 @@ body {
     font-size: 4em;
 }
 
+/* MODIFICADO: Contador principal en la app */
 #main-app-timer-countdown {
-    font-size: 1.4em;
+    font-size: 1.6em; /* Un poco más grande */
     font-weight: bold;
-    color: var(--primary-blue);
-    margin-top: 10px;
-    margin-bottom: 20px;
-    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    color: #00e676; /* Un verde vibrante para el tiempo restante */
+    margin-top: 15px;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px rgba(0, 230, 118, 0.6); /* Sombra más intensa */
+    background-color: rgba(0, 0, 0, 0.4); /* Pequeño fondo para que resalte */
+    padding: 8px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .current-program {
@@ -166,10 +170,8 @@ body {
 /* --- PIE DE PÁGINA --- */
 .app-footer {
     padding: 15px 20px;
-    /* Cambiado a negro con transparencia */
     background-color: rgba(0, 0, 0, 0.6); /* Negro con 60% de opacidad */
     text-align: center;
-    /* Ajuste de la sombra para que se vea sutil en un fondo transparente */
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.6); /* Sombra un poco más pronunciada y oscura */
     backdrop-filter: blur(2px); /* Opcional: Un pequeño desenfoque al contenido detrás */
     -webkit-backdrop-filter: blur(2px); /* Para compatibilidad con Safari */
@@ -230,7 +232,7 @@ body {
     left: -250px;
     height: 100%;
     width: 250px;
-    background-color: var(--menu-bg-color);
+    background-color: rgba(0, 0, 0, 0.9); /* Fondo negro con 90% de opacidad */
     z-index: 100;
     overflow-x: hidden;
     transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -257,16 +259,24 @@ body {
 
 /* Elementos del menú (los enlaces) */
 .side-menu .menu-items a {
-    padding: 8px 8px 8px 32px;
+    padding: 15px 25px; /* Más espacio interno */
     text-decoration: none !important;
-    font-size: 25px;
-    color: var(--menu-item-color) !important;
-    display: block;
-    transition: 0.3s;
+    font-size: 22px; /* Un poco más grande para mejor lectura */
+    color: var(--menu-item-hover-color) !important; /* Texto blanco brillante por defecto */
+    display: block; /* Para que ocupe todo el ancho y el padding funcione */
+    transition: background-color 0.3s, color 0.3s;
+
+    /* Borde difuminado en la parte inferior */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea blanca muy sutil */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra suave para un efecto difuminado */
+    margin-bottom: 5px; /* Pequeño espacio entre categorías */
+}
+.side-menu .menu-items a:last-child {
+    border-bottom: none; /* Elimina el borde del último elemento */
 }
 .side-menu .menu-items a:hover {
-    color: var(--menu-item-hover-color) !important;
-    background-color: #333;
+    color: #fff !important; /* Asegura el blanco brillante al pasar el mouse */
+    background-color: rgba(255, 255, 255, 0.1); /* Un ligero cambio de fondo al pasar el mouse */
 }
 
 /* Estado "abierto" del menú */
@@ -289,14 +299,16 @@ body {
     left: 50%;
     transform: translate(-50%, -50%); /* Centra el panel */
     width: 90%; /* Ancho del panel */
-    max-width: 300px; /* Ancho máximo */
-    background-color: var(--panel-bg-color); /* Color de fondo del panel */
+    max-width: 320px; /* MODIFICADO: Ancho máximo un poco más grande */
+    background-color: rgba(var(--panel-bg-color), 0.95); /* MODIFICADO: Usar variable con transparencia */
     color: var(--text-color);
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    border-radius: 15px; /* MODIFICADO: Bordes más redondeados */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6); /* MODIFICADO: Sombra más suave y pronunciada */
     z-index: 101; /* Por encima del menú y overlay */
-    padding: 20px;
+    padding: 25px; /* MODIFICADO: Más padding interno */
     text-align: center;
+    backdrop-filter: blur(3px); /* NUEVO: Añadir un ligero desenfoque de fondo */
+    -webkit-backdrop-filter: blur(3px); /* NUEVO: Para compatibilidad con Safari */
 
     /* Oculto por defecto */
     opacity: 0;
@@ -313,13 +325,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* MODIFICADO: Más espacio */
+    padding-bottom: 10px; /* NUEVO: Espacio para el borde inferior */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* NUEVO: Línea sutil */
 }
 
 .panel-header p {
     margin: 0;
-    font-size: 1.2em;
+    font-size: 1.4em; /* MODIFICADO: Título más grande */
     font-weight: bold;
+    color: var(--primary-blue); /* MODIFICADO: Color principal */
 }
 
 .panel-closebtn {
@@ -333,37 +348,82 @@ body {
     color: var(--text-color);
 }
 
+/* NUEVO: Estilos para el input de tiempo (simulando Android) */
+#timer-set-time {
+    background-color: rgba(255, 255, 255, 0.15); /* Fondo semitransparente, un poco más claro */
+    color: var(--text-color); /* Blanco */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde sutil y visible */
+    border-radius: 10px; /* Bordes más redondeados para un look moderno */
+    padding: 12px 15px; /* Más padding para que sea más fácil de tocar */
+    font-size: 1.2em; /* Fuente un poco más grande */
+    font-weight: bold; /* Texto más grueso */
+    width: calc(100% - 30px); /* Ocupa casi todo el ancho con padding */
+    box-sizing: border-box; /* Incluye padding en el ancho */
+    margin-top: 20px; /* Más espacio arriba */
+    margin-bottom: 20px; /* Más espacio abajo */
+    outline: none; /* Eliminar contorno por defecto al enfocar */
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); /* Sombra interna para un efecto de profundidad */
+    -webkit-appearance: none; /* Elimina la apariencia por defecto del sistema operativo (para WebKit) */
+    /* color-scheme: dark; /* Sugiere al navegador que use un esquema de color oscuro para el elemento */
+}
+
+#timer-set-time:focus {
+    border-color: var(--primary-blue); /* Borde azul vibrante al enfocar */
+    background-color: rgba(255, 255, 255, 0.08); /* Fondo ligeramente más claro al enfocar */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 123, 255, 0.6); /* Sombra exterior azul suave */
+}
+
+/* NUEVO: Estilos para el texto de descripción del temporizador */
+.timer-description {
+    font-size: 0.9em;
+    color: var(--light-grey);
+    margin-bottom: 20px;
+}
+
+
 .panel-buttons button {
-    background-color: var(--dark-blue);
+    /* MODIFICADO: Colores y bordes para los botones */
+    background-color: var(--primary-blue); /* Usar azul primario */
     color: var(--text-color);
     border: none;
-    padding: 10px 15px;
-    margin: 8px; /* Más espacio */
-    border-radius: 5px;
+    padding: 12px 20px; /* Más padding */
+    margin: 8px;
+    border-radius: 8px; /* Bordes más redondeados */
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s ease;
-    min-width: 100px; /* Ancho mínimo para botones */
+    font-size: 1.1em; /* Texto un poco más grande */
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    min-width: 120px; /* Ancho mínimo para botones */
 }
 
 .panel-buttons button:hover {
-    background-color: var(--primary-blue);
+    background-color: var(--dark-blue); /* Azul más oscuro al pasar el mouse */
+    transform: translateY(-2px); /* Pequeño efecto de elevación */
+}
+.panel-buttons button:active {
+    transform: translateY(0); /* Vuelve a la posición original al hacer clic */
 }
 
 .cancel-button {
-    background-color: #dc3545; /* Rojo para cancelar */
-    color: var(--text-color);
-    border: none;
-    padding: 10px 15px;
-    margin-top: 15px;
-    border-radius: 5px;
+    /* MODIFICADO: Color y hover para el botón cancelar */
+    background-color: #dc3545; /* Rojo más estándar */
+    color: var(--text-color); /* Asegura el color del texto */
+    border: none; /* Asegura que no tenga borde */
+    padding: 12px 20px; /* Igual que los otros botones para consistencia */
+    margin-top: 15px; /* Deja espacio con los botones de arriba */
+    border-radius: 8px; /* Iguales bordes redondeados */
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s ease;
+    font-size: 1.1em; /* Igual tamaño de fuente */
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 .cancel-button:hover {
-    background-color: #c82333;
+    background-color: #c82333; /* Rojo más oscuro al pasar el mouse */
+    transform: translateY(-2px);
 }
+.cancel-button:active {
+    transform: translateY(0);
+}
+
 
 /* Clase para ocultar elementos que se manejan con JS (usado para el contador principal y botón cancelar timer) */
 .hidden {
@@ -398,6 +458,7 @@ body {
 
     .selection-panel {
         width: 95%; /* Ocupa más ancho en móviles */
+        max-width: 95%; /* Asegura que no se exceda */
     }
 }
 @media screen and (max-height: 450px) {

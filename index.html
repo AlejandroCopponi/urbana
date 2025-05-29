@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estación Urbana 104.7</title>
     <link rel="stylesheet" href="style.css">
-    </head>
+</head>
 <body>
     <div id="menu-overlay" class="menu-overlay"></div>
 
@@ -13,23 +13,28 @@
         <a href="javascript:void(0)" class="closebtn" id="close-menu">&times;</a>
         
         <div class="menu-items" id="main-menu-options">
-            <a href="#" id="menu-timer-option">Timer de Apagado</a> <a href="#" id="menu-alarm">Alarma</a>
+            <a href="#" id="menu-alarm">Alarma</a>
+            <a href="#" id="menu-timer-option">Timer de Apagado</a>
+            <a href="#">Categorías</a>
+            <a href="#">Volver a escuchar</a>
+            <a href="#">Publicidad</a>
         </div>
     </div>
 
     <div id="app-wrapper">
         <div class="container">
             <header class="app-header">
-                <div class="menu-icon">
-                    &#9776; </div>
+                <div class="menu-icon" id="menu-icon"> &#9776; 
+                </div>
             </header>
 
             <main class="main-content">
                 <div class="logo-placeholder">
-                    <span>[LOGO]</span> </div>
+                    <span>[LOGO]</span> 
+                </div>
                 <div class="player-controls">
                     <button id="play-pause-btn" class="play-button">▶</button>
-                    </div>
+                </div>
                 <p id="main-app-timer-countdown" class="hidden">Tiempo restante: --:--</p>
                 <div class="current-program">
                     <p>Al aire: <span id="program-name">Cargando...</span></p>
@@ -52,18 +57,24 @@
         </div>
     </div>
 
-    <div id="timer-selection-panel" class="selection-panel">
+    <div id="selection-panel" class="selection-panel">
         <div class="panel-header">
-            <p>Apagar en:</p>
-            <a href="javascript:void(0)" class="closebtn panel-closebtn" id="close-timer-panel">&times;</a>
+            <p>Programar Apagado</p>
+            <a href="javascript:void(0)" class="panel-closebtn" id="timer-panel-close-btn">&times;</a>
         </div>
-        <div class="panel-buttons timer-buttons">
-            <button data-minutes="15">15 min</button>
-            <button data-minutes="30">30 min</button>
-            <button data-minutes="60">1 hr</button>
-            <button data-minutes="120">2 hr</button>
+        <div class="panel-content">
+            <label for="timer-set-time">Apagar a las:</label>
+            <input type="time" id="timer-set-time" value="23:00">
+            <p class="timer-description">La radio se apagará a la hora seleccionada.</p>
         </div>
-        <button id="cancel-timer-button" class="cancel-button hidden">Cancelar Timer</button> </div>
+        <div class="panel-buttons">
+            <button id="set-timer-by-time-btn">Establecer</button>
+            <button id="cancel-timer-btn" class="cancel-button hidden">Cancelar Timer</button>
+        </div>
+    </div>
+    
+    <audio id="radio-stream" src="https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream" preload="none"></audio>
+    
     <script src="app.js"></script>
 </body>
 </html>

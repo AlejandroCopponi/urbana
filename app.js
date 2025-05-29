@@ -1,290 +1,249 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Referencias a elementos del DOM ---
     const playPauseBtn = document.getElementById('play-pause-btn');
+    const radioStream = document.getElementById('radio-stream');
     const programNameSpan = document.getElementById('program-name');
 
-    // Referencias para el menú lateral
-    const menuIcon = document.querySelector('.menu-icon');
+    // Elementos del menú lateral
+    const menuToggle = document.getElementById('menu-icon'); // Asumo que este es el botón para abrir el menú
     const sideMenu = document.getElementById('side-menu');
-    const closeMenuBtn = document.getElementById('close-menu');
     const menuOverlay = document.getElementById('menu-overlay');
-    
-    // Referencias para las opciones del menú principal (el ID cambió en HTML)
-    const menuTimerOption = document.getElementById('menu-timer-option'); // ID actualizado
-    const menuAlarmOption = document.getElementById('menu-alarm');
-    
-    // Referencias para el NUEVO PANEL FLOTANTE del Timer de Apagado
-    const timerSelectionPanel = document.getElementById('timer-selection-panel');
-    const closeTimerPanelBtn = document.getElementById('close-timer-panel');
-    const timerButtonsContainer = timerSelectionPanel.querySelector('.timer-buttons');
-    const cancelTimerBtn = document.getElementById('cancel-timer-button'); // ID actualizado
-    
-    // Referencia para el contador del Timer en el cuerpo principal de la app
-    const mainAppTimerCountdown = document.getElementById('main-app-timer-countdown');
+    const closeMenuBtn = document.getElementById('close-menu');
 
-    // --- Variables de Estado Globales ---
-    let isPlaying = false;
-    const streamUrl = "http://nodo10.arcast.live:8500/enlace.mp3"; // URL de tu streaming
-    let currentRadioStreamElement = null; // Referencia al elemento de audio activo
+    // Elementos del Panel del Timer
+    const timerOptionInMenu = document.getElementById('menu-timer-option');
+    const selectionPanel = document.getElementById('selection-panel');
+    const timerPanelCloseBtn = document.getElementById('timer-panel-close-btn');
+    const timerSetTimeInput = document.getElementById('timer-set-time'); // El input de tiempo
+    const setTimerByTimeBtn = document.getElementById('set-timer-by-time-btn'); // Botón para establecer timer
+    const cancelTimerBtn = document.getElementById('cancel-timer-btn'); // Botón para cancelar timer
+    const mainAppTimerCountdown = document.getElementById('main-app-timer-countdown'); // El texto del contador en la app principal
 
-    // Variables para el Timer
-    let timerTimeoutId = null; // Guarda el ID de setTimeout para el apagado
-    let timerIntervalId = null; // Guarda el ID de setInterval para la cuenta regresiva
-    let endTime = null; // Guarda la marca de tiempo cuando el timer debe finalizar
-
-    // --- Funciones de Utilidad para el Audio ---
-
-    // Función para crear un nuevo elemento de audio y adjuntar sus listeners
-    const createAndInitializeAudioElement = () => {
-        // Si ya hay un elemento de audio existente, lo limpiamos y removemos para evitar conflictos
-        if (currentRadioStreamElement) {
-            currentRadioStreamElement.pause(); 
-            currentRadioStreamElement.src = ''; 
-            currentRadioStreamElement.load();   
-            if (currentRadioStreamElement.parentNode) {
-                currentRadioStreamElement.parentNode.removeChild(currentRadioStreamElement);
-            }
-            currentRadioStreamElement = null;
-        }
-
-        // Crear un NUEVO elemento <audio>
-        const newAudioElement = document.createElement('audio');
-        newAudioElement.id = 'radio-stream'; 
-        newAudioElement.preload = 'none'; 
-        newAudioElement.src = streamUrl; 
-        newAudioElement.style.display = 'none'; // Ocultar el elemento visualmente
-        document.body.appendChild(newAudioElement); // Añadir el nuevo elemento al cuerpo del documento
-
-        // --- Adjuntar todos los Event Listeners al Nuevo Elemento de Audio ---
-        newAudioElement.addEventListener('loadstart', () => { console.log('Evento Audio: loadstart'); });
-        newAudioElement.addEventListener('loadedmetadata', () => { console.log('Evento Audio: loadedmetadata'); });
-        newAudioElement.addEventListener('loadeddata', () => { console.log('Evento Audio: loadeddata'); });
-        newAudioElement.addEventListener('canplay', () => { console.log('Evento Audio: canplay'); });
-        newAudioElement.addEventListener('canplaythrough', () => { console.log('Evento Audio: canplaythrough'); });
-        
-        newAudioElement.addEventListener('playing', () => {
-            console.log('Evento Audio: playing (Stream reproduciéndose activamente).');
-            isPlaying = true;
-            playPauseBtn.innerHTML = '❚❚'; // Cambiar icono a Pausa
-            playPauseBtn.classList.remove('play-button');
-            playPauseBtn.classList.add('pause-button');
-        });
-        
-        newAudioElement.addEventListener('pause', () => {
-            console.log('Evento Audio: pause (Stream pausado).');
-            isPlaying = false;
-            playPauseBtn.innerHTML = '▶'; // Cambiar icono a Play
-            playPauseBtn.classList.remove('pause-button');
-            playPauseBtn.classList.add('play-button');
-        });
-        
-        newAudioElement.addEventListener('ended', () => {
-            console.log('Evento Audio: ended (Stream terminó).');
-            isPlaying = false;
-            playPauseBtn.innerHTML = '▶';
-            playPauseBtn.classList.remove('pause-button');
-            playPauseBtn.classList.add('play-button');
-        });
-        
-        newAudioElement.addEventListener('error', (e) => {
-            console.error("Evento Audio: error (Ocurrió un error en el elemento de audio).", e);
-            let errorMessage = "Hubo un error con el stream de radio. Revisa la Consola (F12).";
-            if (e.target && e.target.error) {
-                switch (e.target.error.code) {
-                    case e.target.error.MEDIA_ERR_ABORTED: errorMessage = 'Carga abortada.'; break;
-                    case e.target.error.MEDIA_ERR_NETWORK: errorMessage = 'Error de red.'; break;
-                    case e.target.error.MEDIA_ERR_DECODE: errorMessage = 'Error de decodificación.'; break;
-                    case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED: errorMessage = 'Fuente no soportada o inaccesible (CORS).'; break;
-                    default: errorMessage = 'Error desconocido.'; break;
-                }
-            }
-            alert(errorMessage);
-            isPlaying = false;
-            playPauseBtn.innerHTML = '▶';
-            playPauseBtn.classList.remove('pause-button');
-            playPauseBtn.classList.add('play-button');
-        });
-        
-        newAudioElement.addEventListener('stalled', () => { console.warn('Evento Audio: stalled'); });
-        newAudioElement.addEventListener('waiting', () => { console.log('Evento Audio: waiting'); });
-
-        return newAudioElement; // Retorna la referencia al elemento recién creado
-    };
+    let isPlaying = false; // Variable para controlar el estado del reproductor
+    let countdownInterval; // Variable para el intervalo del timer de apagado
 
     // --- Lógica del Botón Play/Pausa ---
     playPauseBtn.addEventListener('click', () => {
-        console.log("Clic en botón Play/Pausa. Estado actual isPlaying:", isPlaying);
-
         if (isPlaying) {
-            if (currentRadioStreamElement) { 
-                currentRadioStreamElement.pause();
-                console.log("Solicitud de pausa.");
-            }
+            radioStream.pause(); // Pausa la reproducción
+            playPauseBtn.innerHTML = '▶'; // Cambia el icono a Play
+            playPauseBtn.classList.remove('pause-button'); // Quita la clase de pausa
+            playPauseBtn.classList.add('play-button'); // Añade la clase de play
         } else {
-            console.log("Solicitud de reproducción. Creando/Reinicializando elemento de audio.");
-            currentRadioStreamElement = createAndInitializeAudioElement();
-            
-            currentRadioStreamElement.play()
+            console.log("Intentando reproducir el stream..."); // Mensaje de depuración
+            radioStream.load(); // Intenta recargar el stream (útil para algunos casos)
+            radioStream.play()
                 .then(() => {
-                    console.log("Promesa de play resuelta con éxito.");
+                    isPlaying = true; // Solo si la reproducción es exitosa
+                    playPauseBtn.innerHTML = '❚❚'; // Cambia el icono a Pausa
+                    playPauseBtn.classList.remove('play-button'); // Quita la clase de play
+                    playPauseBtn.classList.add('pause-button'); // Añade la clase de pausa
+                    console.log("Reproducción iniciada con éxito.");
                 })
                 .catch(error => {
-                    console.error("Error al intentar reproducir la radio (promesa rechazada):", error);
-                    alert("No se pudo iniciar/reanudar la reproducción. Revisa la Consola (F12) para más detalles.");
-                    isPlaying = false;
-                    playPauseBtn.innerHTML = '▶';
+                    // Manejo de errores si la reproducción falla (ej. por auto-play policy o CORS)
+                    console.error("Error al intentar reproducir la radio:", error);
+                    alert("No se pudo iniciar la reproducción. Razones comunes: el navegador bloquea el auto-play (haz clic en la página primero), o la URL del stream es incorrecta/inaccesible (CORS). Revisa la Consola (F12) para más detalles.");
+                    isPlaying = false; // Asegurarse de que el estado es "pausado"
+                    playPauseBtn.innerHTML = '▶'; // Mantener icono de Play
                     playPauseBtn.classList.remove('pause-button');
                     playPauseBtn.classList.add('play-button');
                 });
         }
     });
 
-    // --- Lógica del Menú Desplegable ---
-    const openMenu = () => {
-        sideMenu.classList.add('open');
-        menuOverlay.classList.add('open');
-        // Asegurarse de que el panel de selección del timer esté oculto al abrir el menú principal
-        timerSelectionPanel.classList.remove('open'); 
-    };
+    // --- Eventos de depuración del elemento de audio ---
+    radioStream.addEventListener('error', (e) => {
+        console.error("Error en el elemento de audio:", e);
+        let errorMessage = 'Un error desconocido ocurrió.';
+        switch (e.target.error.code) {
+            case e.target.error.MEDIA_ERR_ABORTED:
+                errorMessage = 'La carga del audio fue abortada.';
+                break;
+            case e.target.error.MEDIA_ERR_NETWORK:
+                errorMessage = 'Error de red al cargar el audio.';
+                break;
+            case e.target.error.MEDIA_ERR_DECODE:
+                errorMessage = 'Error de decodificación de audio. Formato no soportado o corrupto.';
+                break;
+            case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                errorMessage = 'El formato del audio no es soportado o la URL es inaccesible/inválida (CORS).';
+                break;
+        }
+        console.error(errorMessage);
+        alert("Hubo un error con el stream de radio: " + errorMessage + " Consulta la Consola (F12) para más detalles.");
+        isPlaying = false;
+        playPauseBtn.innerHTML = '▶';
+        playPauseBtn.classList.remove('pause-button');
+        playPauseBtn.classList.add('play-button');
+    });
 
-    const closeMenu = () => {
+    radioStream.addEventListener('stalled', () => {
+        console.warn('La descarga del stream se ha detenido inesperadamente.');
+    });
+
+    radioStream.addEventListener('waiting', () => {
+        console.log('Esperando que los datos del stream estén disponibles...');
+    });
+
+    radioStream.addEventListener('playing', () => {
+        console.log('El stream está reproduciéndose.');
+    });
+
+    // --- Lógica del Menú Lateral ---
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            sideMenu.classList.add('open');
+            menuOverlay.classList.add('open');
+        });
+    }
+
+    closeMenuBtn.addEventListener('click', () => {
         sideMenu.classList.remove('open');
         menuOverlay.classList.remove('open');
-        // Asegurarse de ocultar el panel de selección del timer cuando se cierra el menú principal
-        timerSelectionPanel.classList.remove('open'); 
-    };
+    });
 
-    menuIcon.addEventListener('click', openMenu);
-    closeMenuBtn.addEventListener('click', closeMenu);
-    menuOverlay.addEventListener('click', closeMenu); // Cierra el menú al hacer clic fuera de él
+    menuOverlay.addEventListener('click', () => {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+    });
 
-    // --- Lógica del Timer de Apagado ---
-    const startTimer = (minutes) => {
-        cancelTimer(); // Cancelar cualquier timer existente
-        endTime = new Date().getTime() + (minutes * 60 * 1000);
+    // --- Lógica del Timer de Apagado por Hora ---
+    let timerTimeout; // Variable para almacenar el timeout del timer
 
-        updateTimerDisplay(); // Actualiza inmediatamente el contador visible
-        mainAppTimerCountdown.classList.remove('hidden'); // Muestra el contador en el cuerpo principal
-        timerIntervalId = setInterval(updateTimerDisplay, 1000); // Actualiza cada segundo
+    timerOptionInMenu.addEventListener('click', () => {
+        sideMenu.classList.remove('open'); // Cierra el menú al abrir el panel del timer
+        menuOverlay.classList.remove('open'); // Oculta el overlay
+        selectionPanel.classList.add('open'); // Muestra el panel de selección del timer
 
-        // Programa el apagado de la radio
-        timerTimeoutId = setTimeout(() => {
-            if (currentRadioStreamElement && isPlaying) {
-                currentRadioStreamElement.pause();
-                console.log("Radio pausada por Timer de Apagado.");
-                alert("La radio se ha apagado automáticamente por el Timer.");
-            }
-            cancelTimer(); // Limpia el timer una vez que se activa
-        }, minutes * 60 * 1000); // El tiempo en milisegundos para el setTimeout
+        // Oculta el botón de cancelar si no hay un timer activo
+        if (!countdownInterval) { // Si no hay intervalo activo
+            cancelTimerBtn.classList.add('hidden');
+        } else {
+            cancelTimerBtn.classList.remove('hidden'); // Si hay, lo muestra
+        }
+        
+        // Establecer hora por defecto en el input (hora actual + 1 hora, o una hora redondeada)
+        const now = new Date();
+        const defaultHour = now.getHours();
+        const defaultMinutes = now.getMinutes();
+        const defaultTime = `${String(defaultHour).padStart(2, '0')}:${String(defaultMinutes).padStart(2, '0')}`;
+        timerSetTimeInput.value = defaultTime;
+    });
 
-        console.log(`Timer de apagado programado para ${minutes} minutos.`);
-        alert(`La radio se apagará en ${minutes} minutos.`);
-        closeMenu(); // Cierra el menú principal
-        timerSelectionPanel.classList.remove('open'); // Oculta el panel de selección del timer
-        // El botón Cancelar Timer en el panel flotante
-        cancelTimerBtn.classList.remove('hidden'); 
-    };
+    timerPanelCloseBtn.addEventListener('click', () => {
+        selectionPanel.classList.remove('open'); // Cierra el panel del timer
+    });
 
-    const updateTimerDisplay = () => {
-        const now = new Date().getTime();
-        const timeLeft = endTime - now;
-
-        if (timeLeft <= 0) {
-            mainAppTimerCountdown.textContent = 'Timer finalizado.';
-            cancelTimer();
+    setTimerByTimeBtn.addEventListener('click', () => {
+        const timeValue = timerSetTimeInput.value; // Ej. "23:00"
+        if (!timeValue) {
+            alert('Por favor, selecciona una hora para el temporizador.');
             return;
         }
 
-        const totalSeconds = Math.floor(timeLeft / 1000);
-        const displayMinutes = Math.floor(totalSeconds / 60);
-        const displaySeconds = totalSeconds % 60;
+        const [hoursStr, minutesStr] = timeValue.split(':');
+        const targetHour = parseInt(hoursStr, 10);
+        const targetMinute = parseInt(minutesStr, 10);
 
-        const formattedTime = 
-            `${displayMinutes.toString().padStart(2, '0')}:${displaySeconds.toString().padStart(2, '0')}`;
-        mainAppTimerCountdown.textContent = `Tiempo restante: ${formattedTime}`;
-    };
+        const now = new Date();
+        let targetDate = new Date();
+        targetDate.setHours(targetHour, targetMinute, 0, 0); // Establece la hora y minutos del target
 
-    const cancelTimer = () => {
-        if (timerTimeoutId) {
-            clearTimeout(timerTimeoutId);
-            timerTimeoutId = null;
+        // Si la hora objetivo ya pasó hoy, programarla para mañana
+        if (targetDate.getTime() <= now.getTime()) {
+            targetDate.setDate(targetDate.getDate() + 1);
         }
-        if (timerIntervalId) {
-            clearInterval(timerIntervalId);
-            timerIntervalId = null;
+
+        const timeDiffMs = targetDate.getTime() - now.getTime();
+        if (timeDiffMs <= 0) {
+            // Esto no debería pasar con la lógica anterior, pero es una seguridad
+            alert('La hora seleccionada ya pasó. Intenta de nuevo.');
+            return;
         }
-        endTime = null; // Resetea el tiempo final
-        mainAppTimerCountdown.textContent = 'Timer cancelado.'; // Mensaje de cancelado
-        mainAppTimerCountdown.classList.add('hidden'); // Oculta el contador en el cuerpo principal
-        cancelTimerBtn.classList.add('hidden'); // Oculta el botón de cancelar en el panel
-        console.log("Timer de apagado cancelado.");
-    };
 
-    // --- Event Listeners para los botones del Panel de Selección del Timer ---
-    timerButtonsContainer.addEventListener('click', (event) => {
-        if (event.target.tagName === 'BUTTON' && event.target.dataset.minutes) {
-            const minutes = parseInt(event.target.dataset.minutes);
-            startTimer(minutes);
-        }
+        // Limpiar cualquier timer existente
+        clearInterval(countdownInterval);
+        clearTimeout(timerTimeout);
+
+        // Iniciar el timeout principal para apagar la radio
+        timerTimeout = setTimeout(() => {
+            radioStream.pause();
+            isPlaying = false;
+            playPauseBtn.innerHTML = '▶';
+            playPauseBtn.classList.remove('pause-button');
+            playPauseBtn.classList.add('play-button');
+            mainAppTimerCountdown.classList.add('hidden'); // Ocultar contador
+            console.log('Radio apagada por temporizador.');
+            alert('El temporizador ha apagado la radio.');
+            clearInterval(countdownInterval); // Asegurar que el intervalo del contador también se limpia
+        }, timeDiffMs);
+
+        // Actualizar el contador cada segundo
+        let remainingTime = timeDiffMs;
+        mainAppTimerCountdown.classList.remove('hidden'); // Mostrar el contador en la app principal
+        cancelTimerBtn.classList.remove('hidden'); // Mostrar botón de cancelar
+
+        countdownInterval = setInterval(() => {
+            remainingTime -= 1000;
+            if (remainingTime <= 0) {
+                mainAppTimerCountdown.textContent = '00:00:00';
+                clearInterval(countdownInterval);
+                // El timeout principal se encarga de apagar la radio
+            } else {
+                const totalSeconds = Math.floor(remainingTime / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                const displayTime = [hours, minutes, seconds]
+                    .map(t => String(t).padStart(2, '0'))
+                    .join(':');
+                mainAppTimerCountdown.textContent = `Apagado en: ${displayTime}`;
+            }
+        }, 1000);
+
+        selectionPanel.classList.remove('open'); // Cierra el panel de selección después de configurar
     });
-    // Event Listener para el botón "Cancelar Timer" en el panel flotante
-    cancelTimerBtn.addEventListener('click', cancelTimer);
 
-    // Event Listener para cerrar el panel de selección del timer
-    closeTimerPanelBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        timerSelectionPanel.classList.remove('open'); // Cierra el panel
+    cancelTimerBtn.addEventListener('click', () => {
+        clearInterval(countdownInterval); // Detiene el contador visual
+        clearTimeout(timerTimeout); // Detiene el apagado de la radio
+        mainAppTimerCountdown.classList.add('hidden'); // Oculta el contador
+        cancelTimerBtn.classList.add('hidden'); // Oculta el botón de cancelar
+        alert('Temporizador de apagado cancelado.');
+        console.log('Temporizador de apagado cancelado.');
+        selectionPanel.classList.remove('open'); // Cierra el panel
     });
 
 
-    // --- Control de la Interfaz del Timer al hacer clic en la opción del menú ---
-    menuTimerOption.addEventListener('click', (e) => {
-        e.preventDefault(); 
-        console.log("Clic en 'Timer de Apagado'. Mostrando interfaz del timer.");
-        closeMenu(); // Cierra el menú principal inmediatamente
-        timerSelectionPanel.classList.add('open'); // Abre el panel de selección del timer
-    });
-
-    // --- Placeholder para la Alarma (funcionalidad pendiente) ---
-    const setupAlarm = () => {
-        alert("Configurar Alarma de Encendido (funcionalidad pendiente)");
-        closeMenu();
-    };
-    menuAlarmOption.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeMenu(); // Cierra el menú principal
-        // Ocultar la interfaz del timer si estuviera activa
-        timerSelectionPanel.classList.remove('open'); 
-        setupAlarm();
-    });
-    
     // --- Lógica de la Programación Actual ---
     const updateProgram = () => {
         const now = new Date();
-        const hour = now.getHours(); 
+        const hour = now.getHours(); // Obtiene la hora actual (0-23)
 
-        let currentProgram = 'Música Continua'; 
+        let currentProgram = 'Música Continua'; // Programa por defecto
 
-        if (hour >= 7 && hour < 10) { 
+        // Puedes personalizar esta programación a tu gusto
+        if (hour >= 7 && hour < 10) {
             currentProgram = 'El Despertador de la Mañana';
-        } else if (hour >= 10 && hour < 13) { 
+        } else if (hour >= 10 && hour < 13) {
             currentProgram = 'Magazine Radial del Día';
-        } else if (hour >= 13 && hour < 16) { 
+        } else if (hour >= 13 && hour < 16) {
             currentProgram = 'Noticias al Mediodía';
-        } else if (hour >= 16 && hour < 19) { 
+        } else if (hour >= 16 && hour < 19) {
             currentProgram = 'Conduciendo la Tarde';
-        } else if (hour >= 19 && hour < 22) { 
+        } else if (hour >= 19 && hour < 22) {
             currentProgram = 'Noches de Rock Nacional';
-        } else if (hour >= 22 || hour < 7) { 
+        } else if (hour >= 22 || hour < 7) { // De 22:00 a 06:59
             currentProgram = 'Selección Musical Nocturna';
         }
 
         programNameSpan.textContent = currentProgram;
     };
 
-    // --- Inicialización al Cargar la Página ---
+    // Actualiza el programa al cargar la página
     updateProgram();
-    setInterval(updateProgram, 60 * 1000);
+    // Actualiza el programa cada minuto (puedes ajustar el intervalo)
+    setInterval(updateProgram, 60 * 1000); // 60 segundos * 1000 milisegundos
 
-    currentRadioStreamElement = createAndInitializeAudioElement();
 });
