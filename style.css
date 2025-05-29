@@ -15,44 +15,44 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%; /* Asegura que html y body ocupen toda la altura */
-    overflow: hidden; /* Evita cualquier scroll no deseado en html/body */
+    width: 100%; /* Asegura que ocupen todo el ancho del viewport */
+    height: 100%; /* Asegura que ocupen toda la altura del viewport */
+    overflow: hidden; /* Evita cualquier scroll no deseado */
     font-family: Arial, sans-serif;
-    color: var(--text-color); /* Color de texto general */
+    color: var(--text-color);
     background-color: var(--background-black); /* Fondo negro general del body */
 }
 
 body {
-    display: flex; /* Habilita Flexbox en el body */
-    /* Centra horizontalmente el contenido principal (el .container) */
-    /* Usamos 'place-items: center;' para centrado horizontal y vertical en una sola propiedad */
-    place-items: center; 
-    /* Eliminamos justify-content y align-items para usar place-items */
+    display: grid; /* Usamos Grid para centrar un solo item de forma robusta */
+    place-items: center; /* Centra el contenido (el .container) tanto horizontal como verticalmente */
 }
 
 .container {
-    width: 100%; /* El contenedor ocupa todo el ancho disponible para ser centrado */
-    max-width: 400px; /* Ancho máximo para simular un móvil */
-    height: 100%; /* Ocupa toda la altura del body/html */
+    width: 100vw; /* El contenedor ocupa el 100% del ANCHO DEL VIEWPORT */
+    height: 100vh; /* El contenedor ocupa el 100% del ALTO DEL VIEWPORT */
+    max-width: 400px; /* Pero con un máximo de 400px de ancho */
+    max-height: 800px; /* Opcional: Un máximo de altura para pantallas grandes */
+    
     display: flex;
-    flex-direction: column; /* Apila los elementos (header, main, footer) */
-    background-color: var(--app-background-color); /* Fondo del área principal de la app */
+    flex-direction: column;
+    background-color: var(--app-background-color);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     overflow: hidden; /* Asegura que no haya desbordamientos internos */
     position: relative; /* Contexto de apilamiento para los elementos de la app */
     z-index: 1; /* Asegura que esté por debajo del menú y overlay */
     
-    /* Centrado adicional con margin: auto para mayor robustez */
-    margin: 0 auto;
+    /* En pantallas grandes, esto centrará el contenedor dentro de los 100vw/100vh del body */
+    margin: auto; 
 }
 
 /* --- CABECERA --- */
 .app-header {
     display: flex;
-    justify-content: flex-start; /* Alinea el menú a la izquierda */
+    justify-content: flex-start;
     align-items: center;
     padding: 15px 20px;
-    background-color: var(--dark-blue); /* Fondo de la cabecera */
+    background-color: var(--dark-blue);
     color: var(--text-color);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -64,7 +64,7 @@ body {
     cursor: pointer;
     padding: 5px;
     line-height: 1;
-    color: var(--text-color); /* Asegura que el icono de hamburguesa sea blanco */
+    color: var(--text-color);
 }
 
 /* --- SECCIÓN PRINCIPAL: Contiene el Logo, Reproductor y Programación --- */
@@ -91,7 +91,7 @@ body {
     width: 90%;
     max-width: 250px;
     height: 30vh;
-    background-color: #444; /* Fondo temporal para el logo */
+    background-color: #444;
     color: var(--light-grey);
     font-size: 2.5em;
     font-weight: bold;
@@ -109,7 +109,7 @@ body {
 
 #play-pause-btn {
     background-color: transparent;
-    color: var(--primary-blue); /* Color de la flecha */
+    color: var(--primary-blue);
     font-size: 5em;
     border: none;
     cursor: pointer;
@@ -187,7 +187,7 @@ body {
     filter: none;
 }
 
-/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY --- */
+/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY (¡Revisión Final para visibilidad!) --- */
 
 /* Overlay (fondo oscuro que cubre la app cuando el menú está abierto) */
 .menu-overlay {
@@ -199,7 +199,7 @@ body {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 99;
     opacity: 0;
-    visibility: hidden;
+    visibility: hidden; /* ¡Clave para que no sea interactivo cuando está oculto! */
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
@@ -207,7 +207,7 @@ body {
 .side-menu {
     position: fixed;
     top: 0;
-    left: -250px; /* Oculto completamente fuera de pantalla por defecto */
+    left: -250px; /* Oculto por defecto */
     height: 100%;
     width: 250px; /* Ancho del menú cuando está abierto */
     background-color: var(--menu-bg-color);
@@ -216,6 +216,10 @@ body {
     transition: left 0.3s ease-in-out;
     padding-top: 60px;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    /* ¡Clave para que no sea interactivo y no visible cuando está oculto! */
+    visibility: hidden; /* Agregado para asegurar que no se vea */
+    opacity: 0; /* Agregado para asegurar que no se vea */
+    transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 /* Botón de cerrar (la X) dentro del menú */
@@ -250,6 +254,8 @@ body {
 /* Estado "abierto" del menú */
 .side-menu.open {
     left: 0;
+    visibility: visible; /* Se hace visible al abrir */
+    opacity: 1; /* Se hace completamente opaco al abrir */
 }
 
 /* Estado "abierto" del overlay */
