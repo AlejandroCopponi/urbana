@@ -12,30 +12,17 @@
     <div id="side-menu" class="side-menu">
         <a href="javascript:void(0)" class="closebtn" id="close-menu">&times;</a>
         
-        <div class="menu-items">
-            <a href="#" id="menu-timer">Timer de Apagado</a>
+        <div class="menu-items" id="main-menu-options"> <a href="#" id="menu-timer">Timer de Apagado</a>
             <a href="#" id="menu-alarm">Alarma de Encendido</a>
-            
-            <div id="timer-options" class="timer-options">
-                <p>Apagar en:</p>
-                <div class="timer-buttons">
-                    <button data-minutes="15">15 min</button>
-                    <button data-minutes="30">30 min</button>
-                    <button data-minutes="60">1 hr</button>
-                    <button data-minutes="120">2 hr</button>
-                    <button id="cancel-timer" class="cancel-button hidden">Cancelar</button>
-                </div>
-                <p id="timer-countdown" class="hidden">Tiempo restante: --:--</p>
-            </div>
-            </div>
-    </div>
+        </div>
+        </div>
 
     <div id="app-wrapper">
         <div class="container">
             <header class="app-header">
                 <div class="menu-icon">
                     &#9776; </div>
-                </header>
+            </header>
 
             <main class="main-content">
                 <div class="logo-placeholder">
@@ -43,6 +30,7 @@
                 <div class="player-controls">
                     <button id="play-pause-btn" class="play-button">▶</button>
                     </div>
+                <p id="main-app-timer-countdown" class="hidden">Tiempo restante: --:--</p>
                 <div class="current-program">
                     <p>Programa Actual: <span id="program-name">Cargando...</span></p>
                 </div>
@@ -62,6 +50,24 @@
                 </div>
             </footer>
         </div>
+    </div>
+
+    <div id="timer-selection-panel" class="selection-panel">
+        <div class="panel-header">
+            <p>Apagar en:</p>
+            <a href="javascript:void(0)" class="closebtn panel-closebtn" id="close-timer-panel">&times;</a>
+        </div>
+        <div class="panel-buttons timer-buttons">
+            <button data-minutes="15">15 min</button>
+            <button data-minutes="30">30 min</button>
+            <button data-minutes="60">1 hr</button>
+            <button data-minutes="120">2 hr</button>
+        </div>
+        <button id="cancel-timer" class="cancel-button hidden">Cancelar Timer</button>
+        </div>
+    <script src="app.js"></script>
+</body>
+</html>
     </div>
 
     <script src="app.js"></script>
