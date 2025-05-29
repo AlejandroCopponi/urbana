@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estación Urbana 104.7</title>
+    <title>Mi Radio PWA</title>
     <link rel="stylesheet" href="style.css">
     </head>
 <body>
@@ -14,44 +14,42 @@
         <div class="menu-items">
             <a href="#" id="menu-timer">Timer de Apagado</a>
             <a href="#" id="menu-alarm">Alarma de Encendido</a>
-            </div>
+        </div>
     </div>
 
-    <div class="container">
+    <div id="app-wrapper">
+        <div class="container">
+            <header class="app-header">
+                <div class="menu-icon">
+                    &#9776; </div>
+            </header>
+
+            <main class="main-content">
+                <div class="logo-placeholder">
+                    <span>[LOGO]</span>
+                </div>
+                <div class="player-controls">
+                    <button id="play-pause-btn" class="play-button">▶</button>
+                </div>
+                <div class="current-program">
+                    <p>Programa Actual: <span id="program-name">Cargando...</span></p>
+                </div>
+            </main>
+
+            <footer class="app-footer">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/tupagina" target="_blank" aria-label="Facebook">
+                        <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook">
+                    </a>
+                    <a href="https://www.instagram.com/tucuenta" target="_blank" aria-label="Instagram">
+                        <img src="https://img.icons8.com/color/48/000000/instagram-new--v1.png" alt="Instagram">
+                    </a>
+                    <a href="https://wa.me/tunumerodetelefono" target="_blank" aria-label="WhatsApp">
+                        <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" alt="WhatsApp">
+                    </a>
+                </div>
+            </footer>
         </div>
-
-    <script src="app.js"></script>
-    <div class="container">
-        <header class="app-header">
-            <div class="menu-icon">
-                &#9776; </div>
-        </header>
-
-        <main class="main-content">
-            <div class="logo-placeholder">
-                <span>[LOGO]</span>
-            </div>
-            <div class="current-program">
-                <p>Programa Actual: <span id="program-name">Cargando...</span></p>
-            </div>
-            <div class="player-controls">
-                <button id="play-pause-btn" class="play-button">▶</button>
-            </div>
-        </main>
-
-        <footer class="app-footer">
-            <div class="social-icons">
-                <a href="https://www.facebook.com/estacionurbana" target="_blank" aria-label="Facebook">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook">
-                </a>
-                <a href="https://www.instagram.com/estacionurbana" target="_blank" aria-label="Instagram">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new--v1.png" alt="Instagram">
-                </a>
-                <a href="https://wa.me/+542995301047" target="_blank" aria-label="WhatsApp">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp--v1.png" alt="WhatsApp">
-                </a>
-            </div>
-        </footer>
     </div>
 
     <script src="app.js"></script>
