@@ -44,16 +44,14 @@ body {
 
 .container {
     width: 100%;
-    max-width: 400px; /* Ancho máximo para simular un móvil */
-    height: 100vh; /* Ocupa toda la altura de la vista */
+    height: 100%;
     display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.4); /* Nuevo: negro con transparencia */
-    backdrop-filter: blur(5px); /* Nuevo: Efecto de desenfoque detrás del contenedor */
-    -webkit-backdrop-filter: blur(5px); /* Para compatibilidad con Safari */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Sombra más oscura */
-    overflow: hidden; /* Asegura que no haya desbordamientos */
-    border-radius: 15px; /* Nuevo: bordes redondeados */
+    background-color: transparent; /* IMPORTANTE: EL CONTENEDOR NO TENDRÁ FONDO SÓLIDO */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 /* --- CABECERA --- */
@@ -67,6 +65,7 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
     box-sizing: border-box;
+    z-index: 2; /* Para que quede por encima del main-content */
 }
 
 .menu-icon {
@@ -89,12 +88,19 @@ body {
     width: 100%;
     box-sizing: border-box;
 
+    /* FONDO PRINCIPAL DE LA APP, ESTO DEBE SER VISIBLE SIEMPRE */
     background-image: url('fondo radio negro.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-blend-mode: multiply;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-blend-mode: multiply; /* Mezcla la imagen con el color base */
+    background-color: rgba(0, 0, 0, 0.6); /* Negro con 60% de opacidad para la base */
+    z-index: 0; /* Por debajo de header y footer */
+    position: absolute; /* Ocupa todo el espacio del container */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .logo-placeholder {
@@ -144,16 +150,12 @@ body {
 }
 
 #main-app-timer-countdown {
-    font-size: 1.6em; /* Un poco más grande */
+    font-size: 1.4em;
     font-weight: bold;
-    color: #00e676; /* Un verde vibrante para el tiempo restante */
-    margin-top: 15px;
-    margin-bottom: 25px;
-    text-shadow: 0 0 8px rgba(0, 230, 118, 0.6); /* Sombra más intensa */
-    background-color: rgba(0, 0, 0, 0.4); /* Pequeño fondo para que resalte */
-    padding: 8px 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    color: var(--primary-blue);
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .current-program {
@@ -169,11 +171,17 @@ body {
 /* --- PIE DE PÁGINA --- */
 .app-footer {
     padding: 15px 20px;
-    background-color: rgba(0, 0, 0, 0.6); /* Negro con 60% de opacidad */
-    text-align: center;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.6); /* Sombra un poco más pronunciada y oscura */
-    backdrop-filter: blur(2px); /* Opcional: Un pequeño desenfoque al contenido detrás */
-    -webkit-backdrop-filter: blur(2px); /* Para compatibilidad con Safari */
+    background-color: rgba(0, 0, 0, 0.72); /* NEGRO CON ALTA TRANSPARENCIA */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute; /* Flota al final del container */
+    bottom: 0;
+    left: 0;
+    z-index: 2; /* Para que quede por encima del main-content */
 }
 
 .social-icons {
@@ -210,7 +218,7 @@ body {
 
 /* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY --- */
 
-/* Overlay (fondo oscuro que cubre la app cuando el menú está abierto) */
+/* Overlay */
 .menu-overlay {
     position: fixed;
     top: 0;
@@ -224,14 +232,14 @@ body {
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-/* Menú lateral (el panel que se desliza) */
+/* Menú lateral */
 .side-menu {
     position: fixed;
     top: 0;
     left: -250px;
     height: 100%;
     width: 250px;
-    background-color: rgba(0, 0, 0, 0.9); /* Fondo negro con 90% de opacidad */
+    background-color: var(--menu-bg-color);
     z-index: 100;
     overflow-x: hidden;
     transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -241,7 +249,7 @@ body {
     opacity: 0;
 }
 
-/* Botón de cerrar (la X) dentro del menú */
+/* Botón de cerrar (la X) */
 .side-menu .closebtn {
     position: absolute;
     top: 0;
@@ -258,24 +266,16 @@ body {
 
 /* Elementos del menú (los enlaces) */
 .side-menu .menu-items a {
-    padding: 15px 25px; /* Más espacio interno */
+    padding: 8px 8px 8px 32px;
     text-decoration: none !important;
-    font-size: 22px; /* Un poco más grande para mejor lectura */
-    color: var(--menu-item-hover-color) !important; /* Texto blanco brillante por defecto */
-    display: block; /* Para que ocupe todo el ancho y el padding funcione */
-    transition: background-color 0.3s, color 0.3s;
-
-    /* Borde difuminado en la parte inferior */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea blanca muy sutil */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra suave para un efecto difuminado */
-    margin-bottom: 5px; /* Pequeño espacio entre categorías */
-}
-.side-menu .menu-items a:last-child {
-    border-bottom: none; /* Elimina el borde del último elemento */
+    font-size: 25px;
+    color: var(--menu-item-color) !important;
+    display: block;
+    transition: 0.3s;
 }
 .side-menu .menu-items a:hover {
-    color: #fff !important; /* Asegura el blanco brillante al pasar el mouse */
-    background-color: rgba(255, 255, 255, 0.1); /* Un ligero cambio de fondo al pasar el mouse */
+    color: var(--menu-item-hover-color) !important;
+    background-color: #333;
 }
 
 /* Estado "abierto" del menú */
@@ -293,29 +293,25 @@ body {
 
 /* --- ESTILOS PARA EL PANEL FLOTANTE DE SELECCIÓN DEL TIMER --- */
 .selection-panel {
-    position: fixed; /* Flota sobre el contenido */
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centra el panel */
-    width: 90%; /* Ancho del panel */
-    max-width: 320px; /* Ancho máximo un poco más grande */
-    background-color: rgba(var(--panel-bg-color), 0.95); /* Usar variable con transparencia */
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 300px;
+    background-color: rgba(60, 60, 60, 0.8); /* Nuevo: Gris oscuro con más transparencia (0.6 opacidad) */
     color: var(--text-color);
-    border-radius: 15px; /* Bordes más redondeados */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6); /* Sombra más suave y pronunciada */
-    z-index: 101; /* Por encima del menú y overlay */
-    padding: 25px; /* Más padding interno */
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 101;
+    padding: 20px;
     text-align: center;
-    backdrop-filter: blur(3px); /* Añadir un ligero desenfoque de fondo */
-    -webkit-backdrop-filter: blur(3px); /* Para compatibilidad con Safari */
-
-    /* Oculto por defecto */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.selection-panel.open { /* Clase para mostrar el panel */
+.selection-panel.open {
     opacity: 1;
     visibility: visible;
 }
@@ -324,16 +320,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px; /* Más espacio */
-    padding-bottom: 10px; /* Espacio para el borde inferior */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea sutil */
+    margin-bottom: 15px;
 }
 
 .panel-header p {
     margin: 0;
-    font-size: 1.4em; /* Título más grande */
+    font-size: 1.2em;
     font-weight: bold;
-    color: var(--primary-blue); /* Color principal */
 }
 
 .panel-closebtn {
@@ -347,86 +340,38 @@ body {
     color: var(--text-color);
 }
 
-/* MODIFICADO: Estilos para los botones del panel */
-.panel-buttons {
-    margin-top: 10px; /* Espacio superior para los botones */
-    margin-bottom: 15px; /* Espacio inferior para los botones, antes del input */
-}
-
 .panel-buttons button {
-    background-color: var(--primary-blue); /* Usar azul primario */
+    background-color: var(--dark-blue);
     color: var(--text-color);
     border: none;
-    padding: 12px 20px; /* Más padding */
+    padding: 10px 15px;
     margin: 8px;
-    border-radius: 8px; /* Bordes más redondeados */
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 1.1em; /* Texto un poco más grande */
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    min-width: 120px; /* Ancho mínimo para botones */
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+    min-width: 100px;
 }
 
 .panel-buttons button:hover {
-    background-color: var(--dark-blue); /* Azul más oscuro al pasar el mouse */
-    transform: translateY(-2px); /* Pequeño efecto de elevación */
-}
-.panel-buttons button:active {
-    transform: translateY(0); /* Vuelve a la posición original al hacer clic */
-}
-
-/* Estilos para el input de tiempo (simulando Android) */
-#timer-set-time {
-    background-color: rgba(var(--panel-bg-color), 0.98); /* 98% de opacidad, casi sólido */
-    color: var(--text-color); /* Blanco */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde sutil y visible */
-    border-radius: 10px; /* Bordes más redondeados para un look moderno */
-    padding: 12px 15px; /* Más padding para que sea más fácil de tocar */
-    font-size: 1.2em; /* Fuente un poco más grande */
-    font-weight: bold; /* Texto más grueso */
-    width: calc(100% - 30px); /* Ocupa casi todo el ancho con padding */
-    box-sizing: border-box; /* Incluye padding en el ancho */
-    margin-top: 10px; /* MODIFICADO: Ajustado el margen superior */
-    margin-bottom: 10px; /* MODIFICADO: Ajustado el margen inferior */
-    outline: none; /* Eliminar contorno por defecto al enfocar */
-    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); /* Sombra interna para un efecto de profundidad */
-    -webkit-appearance: none; /* Elimina la apariencia por defecto del sistema operativo (para WebKit) */
-    /* color-scheme: dark; /* Sugiere al navegador que use un esquema de color oscuro para el elemento */
-}
-
-#timer-set-time:focus {
-    border-color: var(--primary-blue); /* Borde azul vibrante al enfocar */
-    background-color: rgba(255, 255, 255, 0.08); /* Fondo ligeramente más claro al enfocar */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 123, 255, 0.6); /* Sombra exterior azul suave */
-}
-
-.timer-description {
-    font-size: 0.9em;
-    color: var(--light-grey);
-    margin-bottom: 0; /* MODIFICADO: Elimina el margen inferior para que no haya espacio extra */
+    background-color: var(--primary-blue);
 }
 
 .cancel-button {
-    background-color: #dc3545; /* Rojo más estándar */
+    background-color: #dc3545;
     color: var(--text-color);
     border: none;
-    padding: 12px 20px; /* Igual que los otros botones para consistencia */
-    margin-top: 15px; /* Deja espacio con los botones de arriba */
-    border-radius: 8px; /* Iguales bordes redondeados */
+    padding: 10px 15px;
+    margin-top: 15px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 1.1em; /* Igual tamaño de fuente */
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
 }
 .cancel-button:hover {
-    background-color: #c82333; /* Rojo más oscuro al pasar el mouse */
-    transform: translateY(-2px);
-}
-.cancel-button:active {
-    transform: translateY(0);
+    background-color: #c82333;
 }
 
-
-/* Clase para ocultar elementos que se manejan con JS (usado para el contador principal y botón cancelar timer) */
 .hidden {
     display: none !important;
 }
@@ -458,8 +403,7 @@ body {
     }
 
     .selection-panel {
-        width: 95%; /* Ocupa más ancho en móviles */
-        max-width: 95%; /* Asegura que no se exceda */
+        width: 95%;
     }
 }
 @media screen and (max-height: 450px) {
