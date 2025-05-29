@@ -1,53 +1,53 @@
 /* Variables para los colores */
 :root {
-    --primary-blue: #007bff; /* Un azul vibrante para elementos primarios */
-    --dark-blue: #0056b3;    /* Un azul más oscuro para hover y cabeceras/pies */
-    --background-black: #1a1a1a; /* Negro oscuro para el fondo general del body */
-    --app-background-color: #333333; /* Un gris oscuro para el fondo de la app principal */
-    --text-color: #ffffff;     /* Texto blanco por defecto */
-    --light-grey: #cccccc;     /* Gris claro para algunos detalles */
-    --menu-bg-color: #111; /* Color de fondo del menú lateral (casi negro) */
-    --menu-item-color: #818181; /* Color de los enlaces del menú por defecto */
-    --menu-item-hover-color: #f1f1f1; /* Color de los enlaces del menú al pasar el mouse */
+    --primary-blue: #007bff;
+    --dark-blue: #0056b3;
+    --background-black: #1a1a1a;
+    --app-background-color: #333333;
+    --text-color: #ffffff;
+    --light-grey: #cccccc;
+    --menu-bg-color: #111;
+    --menu-item-color: #818181;
+    --menu-item-hover-color: #f1f1f1;
+    --panel-bg-color: #2a2a2a; /* Nuevo color para el panel */
 }
 
 /* --- ESTILOS GENERALES Y LAYOUT DEL CONTENEDOR --- */
 html, body {
     margin: 0;
     padding: 0;
-    width: 100%; /* Asegura que html y body ocupen toda la anchura del viewport */
-    height: 100%; /* Asegura que html y body ocupen toda la altura del viewport */
-    overflow: hidden; /* Evita cualquier scroll no deseado */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     font-family: Arial, sans-serif;
     color: var(--text-color);
-    background-color: var(--background-black); /* Fondo negro general del body */
+    background-color: var(--background-black);
 }
 
 body {
-    display: grid; /* Usamos Grid para centrar un solo item de forma robusta */
-    place-items: center; /* Centra el contenido (el #app-wrapper) tanto horizontal como verticalmente */
+    display: grid;
+    place-items: center;
 }
 
-/* NUEVO WRAPPER PARA CENTRAR LA APP */
 #app-wrapper {
-    position: absolute; /* Posicionamiento absoluto */
-    top: 50%; /* A la mitad del alto */
-    left: 50%; /* A la mitad del ancho */
-    transform: translate(-50%, -50%); /* Ajusta para centrar el elemento por sí mismo */
-    width: 100vw; /* Ocupa todo el ancho del viewport */
-    height: 100vh; /* Ocupa todo el alto del viewport */
-    max-width: 400px; /* Límite de ancho para la app en pantallas grandes */
-    max-height: 800px; /* Límite de alto para la app en pantallas grandes */
-    overflow: hidden; /* Asegura que el contenido no se salga del wrapper */
-    z-index: 1; /* Asegura que esté debajo del menú */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    max-width: 400px;
+    max-height: 800px;
+    overflow: hidden;
+    z-index: 1;
 }
 
 .container {
-    width: 100%; /* Ocupa el 100% del #app-wrapper */
-    height: 100%; /* Ocupa el 100% del #app-wrapper */
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: column; /* Apila los elementos (header, main, footer) */
-    background-color: var(--app-background-color); /* Fondo del área principal de la app */
+    flex-direction: column;
+    background-color: var(--app-background-color);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     position: relative;
@@ -71,7 +71,7 @@ body {
     cursor: pointer;
     padding: 5px;
     line-height: 1;
-    color: var(--text-color); /* Asegura que el icono de hamburguesa sea blanco */
+    color: var(--text-color);
 }
 
 /* --- SECCIÓN PRINCIPAL: Contiene el Logo, Reproductor y Programación --- */
@@ -98,7 +98,7 @@ body {
     width: 90%;
     max-width: 250px;
     height: 30vh;
-    background-color: #444; /* Fondo temporal para el logo */
+    background-color: #444;
     color: var(--light-grey);
     font-size: 2.5em;
     font-weight: bold;
@@ -116,7 +116,7 @@ body {
 
 #play-pause-btn {
     background-color: transparent;
-    color: var(--primary-blue); /* Color de la flecha */
+    color: var(--primary-blue);
     font-size: 5em;
     border: none;
     cursor: pointer;
@@ -139,6 +139,17 @@ body {
 .pause-button {
     font-size: 4em;
 }
+
+/* --- NUEVO ESTILO PARA EL CONTADOR DEL TIMER EN EL CUERPO PRINCIPAL --- */
+#main-app-timer-countdown {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-top: 10px; /* Espacio desde el reproductor */
+    margin-bottom: 20px; /* Espacio antes de la programación */
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Pequeño brillo */
+}
+/* --- FIN NUEVO ESTILO --- */
 
 .current-program {
     font-size: 1.2em;
@@ -198,33 +209,33 @@ body {
 
 /* Overlay (fondo oscuro que cubre la app cuando el menú está abierto) */
 .menu-overlay {
-    position: fixed; /* Asegura que se superpone a todo el viewport */
+    position: fixed;
     top: 0;
     left: 0;
-    height: 100%; /* Ocupa toda la altura del viewport */
-    width: 100%; /* Ocupa todo el ancho del viewport */
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo negro semitransparente */
-    z-index: 99; /* Por debajo del menú principal (100) */
-    opacity: 0; /* Oculto por defecto */
-    visibility: hidden; /* No interactivo por defecto */
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 /* Menú lateral (el panel que se desliza) */
 .side-menu {
-    position: fixed; /* Asegura que se superpone a todo el viewport */
+    position: fixed;
     top: 0;
-    left: -250px; /* Oculto completamente fuera de pantalla por defecto (ancho del menú) */
-    height: 100%; /* Ocupa toda la altura del viewport */
-    width: 250px; /* Ancho del menú cuando está abierto */
-    background-color: var(--menu-bg-color); /* Color de fondo del menú */
-    z-index: 100; /* Por encima del overlay */
-    overflow-x: hidden; /* Evita scroll horizontal dentro del menú */
+    left: -250px;
+    height: 100%;
+    width: 250px;
+    background-color: var(--menu-bg-color);
+    z-index: 100;
+    overflow-x: hidden;
     transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    padding-top: 60px; /* Espacio para el botón de cerrar */
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Sombra para que destaque */
-    visibility: hidden; /* Oculto por defecto */
-    opacity: 0; /* Oculto por defecto */
+    padding-top: 60px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    visibility: hidden;
+    opacity: 0;
 }
 
 /* Botón de cerrar (la X) dentro del menú */
@@ -235,7 +246,7 @@ body {
     font-size: 36px;
     margin-left: 50px;
     text-decoration: none;
-    color: var(--menu-item-color); /* Color de la X */
+    color: var(--menu-item-color);
     transition: 0.3s;
 }
 .side-menu .closebtn:hover {
@@ -245,10 +256,10 @@ body {
 /* Elementos del menú (los enlaces) */
 .side-menu .menu-items a {
     padding: 8px 8px 8px 32px;
-    text-decoration: none !important; /* ¡FUERZA QUITAR SUBRAYADO! */
+    text-decoration: none !important;
     font-size: 25px;
-    color: var(--menu-item-color) !important; /* ¡FUERZA EL COLOR! */
-    display: block; /* Ocupa todo el ancho disponible */
+    color: var(--menu-item-color) !important;
+    display: block;
     transition: 0.3s;
 }
 .side-menu .menu-items a:hover {
@@ -258,9 +269,9 @@ body {
 
 /* Estado "abierto" del menú */
 .side-menu.open {
-    left: 0; /* Se desliza hasta la posición 0 (visible) */
-    visibility: visible; /* Se hace visible al abrir */
-    opacity: 1; /* Se hace completamente opaco al abrir */
+    left: 0;
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Estado "abierto" del overlay */
@@ -269,60 +280,90 @@ body {
     visibility: visible;
 }
 
-/* --- ESTILOS PARA EL TIMER DE APAGADO --- */
-.timer-options {
-    padding: 20px 32px;
-    border-top: 1px solid #333; /* Separador */
-    margin-top: 20px;
+/* --- NUEVOS ESTILOS PARA EL PANEL FLOTANTE DE SELECCIÓN DEL TIMER --- */
+.selection-panel {
+    position: fixed; /* Flota sobre el contenido */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra el panel */
+    width: 90%; /* Ancho del panel */
+    max-width: 300px; /* Ancho máximo */
+    background-color: var(--panel-bg-color); /* Color de fondo del panel */
+    color: var(--text-color);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 101; /* Por encima del menú y overlay */
+    padding: 20px;
     text-align: center;
-    /* ¡CAMBIO DE DEPURACIÓN: HACERLO SIEMPRE VISIBLE! */
-    display: block !important; /* Ahora siempre visible */
+
+    /* Oculto por defecto */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-/* La regla .timer-options.active ya no es necesaria para la visibilidad con este cambio, pero la mantenemos */
-.timer-options.active {
-    /* display: block !important; */ /* No es necesario aquí con la regla de arriba */
+.selection-panel.open {
+    opacity: 1;
+    visibility: visible;
 }
 
-.timer-options p {
-    font-size: 1.1em;
-    color: var(--light-grey);
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
 }
 
+.panel-header p {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
 
+.panel-closebtn {
+    font-size: 28px;
+    text-decoration: none;
+    color: var(--light-grey);
+    transition: 0.2s;
+}
 
-.timer-buttons button {
+.panel-closebtn:hover {
+    color: var(--text-color);
+}
+
+.panel-buttons button {
     background-color: var(--dark-blue);
     color: var(--text-color);
     border: none;
     padding: 10px 15px;
-    margin: 5px;
+    margin: 8px; /* Más espacio */
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 1em;
     transition: background-color 0.2s ease;
+    min-width: 100px; /* Ancho mínimo para botones */
 }
 
-.timer-buttons button:hover {
+.panel-buttons button:hover {
     background-color: var(--primary-blue);
 }
 
-.timer-buttons button.cancel-button {
+.cancel-button {
     background-color: #dc3545; /* Rojo para cancelar */
+    color: var(--text-color);
+    border: none;
+    padding: 10px 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
 }
-.timer-buttons button.cancel-button:hover {
+.cancel-button:hover {
     background-color: #c82333;
 }
 
-#timer-countdown {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--primary-blue);
-    margin-top: 20px;
-}
-
-/* Clase para ocultar elementos (se usa para el contador y el botón de cancelar) */
+/* Clase para ocultar elementos que se manejan con JS */
 .hidden {
     display: none !important;
 }
@@ -330,14 +371,14 @@ body {
 /* --- RESPONSIVE: Ajustes para pantallas pequeñas (móviles) --- */
 @media (max-width: 600px) {
     #app-wrapper {
-        max-width: none; /* No hay límite de ancho en móviles */
-        max-height: none; /* No hay límite de alto en móviles */
+        max-width: none;
+        max-height: none;
         width: 100vw;
         height: 100vh;
     }
     .container {
-        width: 100%; /* Ocupa el 100% del wrapper */
-        height: 100%; /* Ocupa el 100% del wrapper */
+        width: 100%;
+        height: 100%;
         border-radius: 0;
     }
 
@@ -351,6 +392,10 @@ body {
     }
     .side-menu.open {
         left: 0;
+    }
+
+    .selection-panel {
+        width: 95%; /* Ocupa más ancho en móviles */
     }
 }
 @media screen and (max-height: 450px) {
