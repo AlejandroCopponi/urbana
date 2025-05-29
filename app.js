@@ -9,15 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMenuBtn = document.getElementById('close-menu');
     const menuOverlay = document.getElementById('menu-overlay');
     
-    // Referencias para las opciones del menú
-    const menuTimerOption = document.getElementById('menu-timer');
+    // Referencias para las opciones del menú principal (el ID cambió en HTML)
+    const menuTimerOption = document.getElementById('menu-timer-option'); // ID actualizado
     const menuAlarmOption = document.getElementById('menu-alarm');
     
-    // Referencias para la interfaz del Timer de Apagado
-    const timerOptionsDiv = document.getElementById('timer-options');
-    const timerButtonsContainer = timerOptionsDiv.querySelector('.timer-buttons');
-    const cancelTimerBtn = document.getElementById('cancel-timer');
-    const timerCountdownDisplay = document.getElementById('timer-countdown');
+    // Referencias para el NUEVO PANEL FLOTANTE del Timer de Apagado
+    const timerSelectionPanel = document.getElementById('timer-selection-panel');
+    const closeTimerPanelBtn = document.getElementById('close-timer-panel');
+    const timerButtonsContainer = timerSelectionPanel.querySelector('.timer-buttons');
+    const cancelTimerBtn = document.getElementById('cancel-timer-button'); // ID actualizado
+    
+    // Referencia para el contador del Timer en el cuerpo principal de la app
+    const mainAppTimerCountdown = document.getElementById('main-app-timer-countdown');
 
     // --- Variables de Estado Globales ---
     let isPlaying = false;
@@ -25,12 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRadioStreamElement = null; // Referencia al elemento de audio activo
 
     // Variables para el Timer
-    let timerTimeoutId = null; 
-    let timerIntervalId = null; 
-    let endTime = null; 
+    let timerTimeoutId = null; // Guarda el ID de setTimeout para el apagado
+    let timerIntervalId = null; // Guarda el ID de setInterval para la cuenta regresiva
+    let endTime = null; // Guarda la marca de tiempo cuando el timer debe finalizar
 
     // --- Funciones de Utilidad para el Audio ---
+
+    // Función para crear un nuevo elemento de audio y adjuntar sus listeners
     const createAndInitializeAudioElement = () => {
+        // Si ya hay un elemento de audio existente, lo limpiamos y removemos para evitar conflictos
         if (currentRadioStreamElement) {
             currentRadioStreamElement.pause(); 
             currentRadioStreamElement.src = ''; 
@@ -41,13 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
             currentRadioStreamElement = null;
         }
 
+        // Crear un NUEVO elemento <audio>
         const newAudioElement = document.createElement('audio');
         newAudioElement.id = 'radio-stream'; 
         newAudioElement.preload = 'none'; 
         newAudioElement.src = streamUrl; 
-        newAudioElement.style.display = 'none'; 
-        document.body.appendChild(newAudioElement);
+        newAudioElement.style.display = 'none'; // Ocultar el elemento visualmente
+        document.body.appendChild(newAudioElement); // Añadir el nuevo elemento al cuerpo del documento
 
+        // --- Adjuntar todos los Event Listeners al Nuevo Elemento de Audio ---
         newAudioElement.addEventListener('loadstart', () => { console.log('Evento Audio: loadstart'); });
         newAudioElement.addEventListener('loadedmetadata', () => { console.log('Evento Audio: loadedmetadata'); });
         newAudioElement.addEventListener('loadeddata', () => { console.log('Evento Audio: loadeddata'); });
@@ -57,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newAudioElement.addEventListener('playing', () => {
             console.log('Evento Audio: playing (Stream reproduciéndose activamente).');
             isPlaying = true;
-            playPauseBtn.innerHTML = '❚❚';
+            playPauseBtn.innerHTML = '❚❚'; // Cambiar icono a Pausa
             playPauseBtn.classList.remove('play-button');
             playPauseBtn.classList.add('pause-button');
         });
@@ -65,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newAudioElement.addEventListener('pause', () => {
             console.log('Evento Audio: pause (Stream pausado).');
             isPlaying = false;
-            playPauseBtn.innerHTML = '▶';
+            playPauseBtn.innerHTML = '▶'; // Cambiar icono a Play
             playPauseBtn.classList.remove('pause-button');
             playPauseBtn.classList.add('play-button');
         });
@@ -100,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newAudioElement.addEventListener('stalled', () => { console.warn('Evento Audio: stalled'); });
         newAudioElement.addEventListener('waiting', () => { console.log('Evento Audio: waiting'); });
 
-        return newAudioElement;
+        return newAudioElement; // Retorna la referencia al elemento recién creado
     };
 
     // --- Lógica del Botón Play/Pausa ---
@@ -135,43 +143,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const openMenu = () => {
         sideMenu.classList.add('open');
         menuOverlay.classList.add('open');
+        // Asegurarse de que el panel de selección del timer esté oculto al abrir el menú principal
+        timerSelectionPanel.classList.remove('open'); 
     };
 
     const closeMenu = () => {
         sideMenu.classList.remove('open');
         menuOverlay.classList.remove('open');
-        // Asegurarse de ocultar la interfaz del timer cuando se cierra el menú principal
-        timerOptionsDiv.classList.remove('active'); 
+        // Asegurarse de ocultar el panel de selección del timer cuando se cierra el menú principal
+        timerSelectionPanel.classList.remove('open'); 
     };
 
     menuIcon.addEventListener('click', openMenu);
     closeMenuBtn.addEventListener('click', closeMenu);
-    menuOverlay.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu); // Cierra el menú al hacer clic fuera de él
 
     // --- Lógica del Timer de Apagado ---
     const startTimer = (minutes) => {
-        cancelTimer(); 
+        cancelTimer(); // Cancelar cualquier timer existente
         endTime = new Date().getTime() + (minutes * 60 * 1000);
 
-        updateTimerDisplay(); 
-        timerIntervalId = setInterval(updateTimerDisplay, 1000); 
+        updateTimerDisplay(); // Actualiza inmediatamente el contador visible
+        mainAppTimerCountdown.classList.remove('hidden'); // Muestra el contador en el cuerpo principal
+        timerIntervalId = setInterval(updateTimerDisplay, 1000); // Actualiza cada segundo
 
+        // Programa el apagado de la radio
         timerTimeoutId = setTimeout(() => {
             if (currentRadioStreamElement && isPlaying) {
                 currentRadioStreamElement.pause();
                 console.log("Radio pausada por Timer de Apagado.");
                 alert("La radio se ha apagado automáticamente por el Timer.");
             }
-            cancelTimer(); 
-            closeMenu(); // Cierra el menú después de que el timer se active
-        }, minutes * 60 * 1000);
+            cancelTimer(); // Limpia el timer una vez que se activa
+        }, minutes * 60 * 1000); // El tiempo en milisegundos para el setTimeout
 
         console.log(`Timer de apagado programado para ${minutes} minutos.`);
         alert(`La radio se apagará en ${minutes} minutos.`);
-        closeMenu(); // Cierra el menú DESPUÉS de programar el timer y mostrar el alert
-        
-        timerCountdownDisplay.classList.remove('hidden');
-        cancelTimerBtn.classList.remove('hidden');
+        closeMenu(); // Cierra el menú principal
+        timerSelectionPanel.classList.remove('open'); // Oculta el panel de selección del timer
+        // El botón Cancelar Timer en el panel flotante
+        cancelTimerBtn.classList.remove('hidden'); 
     };
 
     const updateTimerDisplay = () => {
@@ -179,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const timeLeft = endTime - now;
 
         if (timeLeft <= 0) {
-            timerCountdownDisplay.textContent = 'Timer finalizado.';
+            mainAppTimerCountdown.textContent = 'Timer finalizado.';
             cancelTimer();
             return;
         }
@@ -190,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formattedTime = 
             `${displayMinutes.toString().padStart(2, '0')}:${displaySeconds.toString().padStart(2, '0')}`;
-        timerCountdownDisplay.textContent = `Tiempo restante: ${formattedTime}`;
+        mainAppTimerCountdown.textContent = `Tiempo restante: ${formattedTime}`;
     };
 
     const cancelTimer = () => {
@@ -202,31 +213,36 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(timerIntervalId);
             timerIntervalId = null;
         }
-        endTime = null;
-        timerCountdownDisplay.textContent = 'Timer cancelado.';
-        timerCountdownDisplay.classList.add('hidden');
-        cancelTimerBtn.classList.add('hidden');
+        endTime = null; // Resetea el tiempo final
+        mainAppTimerCountdown.textContent = 'Timer cancelado.'; // Mensaje de cancelado
+        mainAppTimerCountdown.classList.add('hidden'); // Oculta el contador en el cuerpo principal
+        cancelTimerBtn.classList.add('hidden'); // Oculta el botón de cancelar en el panel
         console.log("Timer de apagado cancelado.");
     };
 
+    // --- Event Listeners para los botones del Panel de Selección del Timer ---
     timerButtonsContainer.addEventListener('click', (event) => {
         if (event.target.tagName === 'BUTTON' && event.target.dataset.minutes) {
             const minutes = parseInt(event.target.dataset.minutes);
             startTimer(minutes);
         }
     });
+    // Event Listener para el botón "Cancelar Timer" en el panel flotante
     cancelTimerBtn.addEventListener('click', cancelTimer);
 
+    // Event Listener para cerrar el panel de selección del timer
+    closeTimerPanelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        timerSelectionPanel.classList.remove('open'); // Cierra el panel
+    });
+
+
     // --- Control de la Interfaz del Timer al hacer clic en la opción del menú ---
-    // Esta es la parte CLAVE para mostrar la interfaz del Timer
     menuTimerOption.addEventListener('click', (e) => {
         e.preventDefault(); 
         console.log("Clic en 'Timer de Apagado'. Mostrando interfaz del timer.");
-        // Ocultar otras secciones del menú si existieran aquí
-        // ...
-        timerOptionsDiv.classList.add('active'); // Mostrar la interfaz de los botones del timer
-        // Puedes optar por no cerrar el menú principal aquí si quieres que el usuario vea los botones del timer y otras opciones del menú
-        // closeMenu(); // Descomenta esta línea si quieres que el menú principal se cierre inmediatamente al seleccionar "Timer de Apagado"
+        closeMenu(); // Cierra el menú principal inmediatamente
+        timerSelectionPanel.classList.add('open'); // Abre el panel de selección del timer
     });
 
     // --- Placeholder para la Alarma (funcionalidad pendiente) ---
@@ -236,8 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     menuAlarmOption.addEventListener('click', (e) => {
         e.preventDefault();
+        closeMenu(); // Cierra el menú principal
         // Ocultar la interfaz del timer si estuviera activa
-        timerOptionsDiv.classList.remove('active'); 
+        timerSelectionPanel.classList.remove('open'); 
         setupAlarm();
     });
     
