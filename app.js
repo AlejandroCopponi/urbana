@@ -2,32 +2,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const programNameSpan = document.getElementById('program-name');
 
+    // --- NUEVAS REFERENCIAS PARA EL MENÚ ---
+    const menuIcon = document.querySelector('.menu-icon');
+    const sideMenu = document.getElementById('side-menu');
+    const closeMenuBtn = document.getElementById('close-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuTimerOption = document.getElementById('menu-timer');
+    const menuAlarmOption = document.getElementById('menu-alarm');
+    // --- FIN NUEVAS REFERENCIAS ---
+
     let isPlaying = false;
     const streamUrl = "https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream"; // URL del stream
 
-    let currentRadioStreamElement = null; // Usamos un nombre diferente para evitar confusiones, y se inicializará aquí
+    let currentRadioStreamElement = null; // Variable para almacenar la referencia al elemento de audio activo
 
     // Función para crear un nuevo elemento de audio y adjuntar sus listeners
     const createAndInitializeAudioElement = () => {
-        // Si ya hay un elemento, lo limpiamos antes de crear uno nuevo
         if (currentRadioStreamElement) {
             currentRadioStreamElement.pause();
-            currentRadioStreamElement.src = ''; // Limpiar src para liberar recursos
-            currentRadioStreamElement.load();   // Forzar carga
+            currentRadioStreamElement.src = '';
+            currentRadioStreamElement.load();
             if (currentRadioStreamElement.parentNode) {
-                currentRadioStreamElement.parentNode.removeChild(currentRadioStreamElement); // Eliminar del DOM
+                currentRadioStreamElement.parentNode.removeChild(currentRadioStreamElement);
             }
-            currentRadioStreamElement = null; // Limpiar la referencia
+            currentRadioStreamElement = null;
         }
 
         const newAudioElement = document.createElement('audio');
         newAudioElement.id = 'radio-stream';
         newAudioElement.preload = 'none';
         newAudioElement.src = streamUrl;
-        newAudioElement.style.display = 'none'; // Ocultar el elemento visualmente
-        document.body.appendChild(newAudioElement); // Añadirlo al cuerpo del documento
+        newAudioElement.style.display = 'none';
+        document.body.appendChild(newAudioElement);
 
-        // ADJUNTAR LISTENERS DIRECTAMENTE AQUÍ, DESPUÉS DE CREAR EL ELEMENTO
         newAudioElement.addEventListener('loadstart', () => { console.log('Evento Audio: loadstart'); });
         newAudioElement.addEventListener('loadedmetadata', () => { console.log('Evento Audio: loadedmetadata'); });
         newAudioElement.addEventListener('loadeddata', () => { console.log('Evento Audio: loadeddata'); });
@@ -75,24 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
         newAudioElement.addEventListener('stalled', () => { console.warn('Evento Audio: stalled'); });
         newAudioElement.addEventListener('waiting', () => { console.log('Evento Audio: waiting'); });
 
-        return newAudioElement; // Retornar la referencia al elemento creado y configurado
+        return newAudioElement;
     };
 
-    // --- Lógica del Botón Play/Pausa ---
+    // --- Lógica del Botón Play/Pausa (sin cambios relevantes) ---
     playPauseBtn.addEventListener('click', () => {
         console.log("Clic en botón Play/Pausa. Estado actual isPlaying:", isPlaying);
 
         if (isPlaying) {
-            // Si está reproduciendo, pausar el elemento actual
             if (currentRadioStreamElement) {
                 currentRadioStreamElement.pause();
                 console.log("Solicitud de pausa.");
             }
-            // isPlaying y el icono se actualizarán por el event listener 'pause'
         } else {
-            // Si no está reproduciendo, crear/recrear el elemento y reproducir
-            console.log("Solicitud de reproducción.");
-            currentRadioStreamElement = createAndInitializeAudioElement(); // Crea un nuevo elemento y lo asigna a la variable global
+            console.log("Solicitud de reproducción. Creando/Reinicializando elemento de audio.");
+            currentRadioStreamElement = createAndInitializeAudioElement();
             
             currentRadioStreamElement.play()
                 .then(() => {
@@ -109,39 +113,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Lógica de la Programación Actual ---
+    // --- Lógica del Menú Desplegable ---
+    const openMenu = () => {
+        sideMenu.classList.add('open');
+        menuOverlay.classList.add('open');
+    };
+
+    const closeMenu = () => {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+    };
+
+    menuIcon.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu); // Cierra el menú al hacer clic fuera de él
+
+    // --- Funciones de Timer y Alarma (implementación básica) ---
+    const setupTimer = () => {
+        alert("Configurar Timer de Apagado (funcionalidad pendiente)");
+        // Aquí iría la lógica para pedir al usuario el tiempo y apagar la radio
+        closeMenu(); // Cierra el menú después de la acción
+    };
+
+    const setupAlarm = () => {
+        alert("Configurar Alarma de Encendido (funcionalidad pendiente)");
+        // Aquí iría la lógica para pedir al usuario la hora y encender la radio
+        closeMenu(); // Cierra el menú después de la acción
+    };
+
+    menuTimerOption.addEventListener('click', setupTimer);
+    menuAlarmOption.addEventListener('click', setupAlarm);
+
+    // --- Lógica de la Programación Actual (sin cambios relevantes) ---
     const updateProgram = () => {
         const now = new Date();
         const hour = now.getHours();
-        // El context es Venado Tuerto, Santa Fe Province, Argentina (GMT-3)
-        // new Date() por defecto usa la zona horaria local del cliente.
-        // Si quieres que la programación sea estrictamente según la hora de Venado Tuerto,
-        // sin importar dónde esté el usuario, necesitarías una librería de zona horaria
-        // o un cálculo más complejo. Por ahora, asumimos la hora local es suficiente.
 
         let currentProgram = 'Música Continua';
 
-        if (hour >= 7 && hour < 10) { // 7:00 AM - 9:59 AM
+        if (hour >= 7 && hour < 10) { 
             currentProgram = 'El Despertador de la Mañana';
-        } else if (hour >= 10 && hour < 13) { // 10:00 AM - 12:59 PM
+        } else if (hour >= 10 && hour < 13) { 
             currentProgram = 'Magazine Radial del Día';
-        } else if (hour >= 13 && hour < 16) { // 1:00 PM - 3:59 PM
+        } else if (hour >= 13 && hour < 16) { 
             currentProgram = 'Noticias al Mediodía';
-        } else if (hour >= 16 && hour < 19) { // 4:00 PM - 6:59 PM
+        } else if (hour >= 16 && hour < 19) { 
             currentProgram = 'Conduciendo la Tarde';
-        } else if (hour >= 19 && hour < 22) { // 7:00 PM - 9:59 PM
+        } else if (hour >= 19 && hour < 22) { 
             currentProgram = 'Noches de Rock Nacional';
-        } else if (hour >= 22 || hour < 7) { // 10:00 PM - 6:59 AM
+        } else if (hour >= 22 || hour < 7) { 
             currentProgram = 'Selección Musical Nocturna';
         }
 
         programNameSpan.textContent = currentProgram;
     };
 
-    // Inicializar la programación y el elemento de audio al cargar la página
     updateProgram();
-    setInterval(updateProgram, 60 * 1000); // Actualiza la programación cada minuto
+    setInterval(updateProgram, 60 * 1000);
 
-    // Al cargar la página, se crea el primer elemento de audio para que esté listo al primer clic
     currentRadioStreamElement = createAndInitializeAudioElement();
 });
