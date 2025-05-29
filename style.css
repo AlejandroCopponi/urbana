@@ -182,39 +182,35 @@ body {
     filter: none;
 }
 
-/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY (¡SECCIÓN REVISADA!) --- */
+/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY (¡LA SECCIÓN CRÍTICA A REVISAR!) --- */
 
 /* Overlay (fondo oscuro que cubre la app cuando el menú está abierto) */
 .menu-overlay {
-    height: 100%;
-    width: 0; /* Oculto por defecto */
-    position: fixed; /* Fijo sobre todo el contenido visible del viewport */
-    z-index: 99; /* Por encima de la app pero debajo del menú */
-    left: 0;
+    position: fixed; /* Asegura que se superpone a todo el viewport */
     top: 0;
-    background-color: rgba(0,0,0, 0.7);
-    /* Transiciones para la apertura del overlay */
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; 
-    opacity: 0; /* Completamente transparente por defecto */
-    visibility: hidden; /* Oculto para que no sea interactivo */
+    left: 0;
+    height: 100%; /* Ocupa toda la altura del viewport */
+    width: 100%; /* Ocupa todo el ancho del viewport */
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo negro semitransparente */
+    z-index: 99; /* Por debajo del menú principal (100) */
+    opacity: 0; /* Oculto por defecto */
+    visibility: hidden; /* No interactivo por defecto */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 /* Menú lateral (el panel que se desliza) */
 .side-menu {
-    height: 100%;
-    /* Oculto completamente fuera de pantalla (left negativo igual a su width) */
-    width: 250px; /* Ancho fijo del menú */
-    left: -250px; /* Posición inicial: completamente oculto a la izquierda */
-
-    position: fixed; /* Fijo sobre todo el contenido visible del viewport */
-    z-index: 100; /* Por encima del overlay */
+    position: fixed; /* Asegura que se superpone a todo el viewport */
     top: 0;
-    
+    left: -250px; /* Oculto completamente fuera de pantalla por defecto (ancho del menú) */
+    height: 100%; /* Ocupa toda la altura del viewport */
+    width: 250px; /* Ancho del menú cuando está abierto */
     background-color: var(--menu-bg-color); /* Color de fondo del menú */
-    overflow-x: hidden; /* Evita scroll horizontal */
-    transition: left 0.3s ease-in-out; /* Transición solo para el deslizamiento (left) */
+    z-index: 100; /* Por encima del overlay */
+    overflow-x: hidden; /* Evita scroll horizontal dentro del menú */
+    transition: left 0.3s ease-in-out; /* Transición para el deslizamiento */
     padding-top: 60px; /* Espacio para el botón de cerrar */
-    box-shadow: 2px 0 10px rgba(0,0,0,0.5); /* Sombra para que destaque */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Sombra para que destaque */
 }
 
 /* Botón de cerrar (la X) dentro del menú */
@@ -228,7 +224,6 @@ body {
     color: var(--menu-item-color); /* Color de la X */
     transition: 0.3s;
 }
-
 .side-menu .closebtn:hover {
     color: var(--menu-item-hover-color);
 }
@@ -236,16 +231,15 @@ body {
 /* Elementos del menú (los enlaces) */
 .side-menu .menu-items a {
     padding: 8px 8px 8px 32px;
-    text-decoration: none; /* Quita el subrayado azul por defecto */
+    text-decoration: none !important; /* ¡FUERZA QUITAR SUBRAYADO! */
     font-size: 25px;
-    color: var(--menu-item-color); /* Color de los enlaces del menú */
+    color: var(--menu-item-color) !important; /* ¡FUERZA EL COLOR! */
     display: block; /* Ocupa todo el ancho disponible */
     transition: 0.3s;
 }
-
 .side-menu .menu-items a:hover {
-    color: var(--menu-item-hover-color);
-    background-color: #333; /* Fondo al pasar el mouse */
+    color: var(--menu-item-hover-color) !important;
+    background-color: #333;
 }
 
 /* Estado "abierto" del menú */
@@ -255,11 +249,9 @@ body {
 
 /* Estado "abierto" del overlay */
 .menu-overlay.open {
-    width: 100%;
     opacity: 1; /* Completamente visible */
     visibility: visible; /* Vuelve a ser interactivo */
 }
-
 
 /* --- RESPONSIVE: Ajustes para pantallas pequeñas (móviles) --- */
 @media (max-width: 600px) {
@@ -275,7 +267,7 @@ body {
         height: 25vh;
     }
     
-    .side-menu { /* Ajuste del ancho del menú para móviles */
+    .side-menu {
         width: 80vw; /* El menú ocupa el 80% del ancho de la pantalla */
         left: -80vw; /* Oculto al 80% del viewport width cuando está cerrado */
     }
@@ -283,7 +275,7 @@ body {
         left: 0; /* Se desliza hasta la posición 0 (visible) */
     }
 }
-@media screen and (max-height: 450px) { /* Ajuste si la altura es muy pequeña (landscape) */
+@media screen and (max-height: 450px) {
     .side-menu { padding-top: 15px; }
     .side-menu .menu-items a { font-size: 18px; }
 }
