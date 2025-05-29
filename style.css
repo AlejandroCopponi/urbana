@@ -44,13 +44,17 @@ body {
 
 .container {
     width: 100%;
-    height: 100%;
+    max-width: 400px; /* Ancho máximo para simular un móvil */
+    height: 100vh; /* Ocupa toda la altura de la vista */
     display: flex;
     flex-direction: column;
-    background-color: var(--app-background-color);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    position: relative;
+    /* ANTES: background-color: #333333; */
+    background-color: rgba(0, 0, 0, 0.4); /* Nuevo: negro con transparencia */
+    backdrop-filter: blur(5px); /* Nuevo: Efecto de desenfoque detrás del contenedor */
+    -webkit-backdrop-filter: blur(5px); /* Para compatibilidad con Safari */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Sombra más oscura */
+    overflow: hidden; /* Asegura que no haya desbordamientos */
+    border-radius: 15px; /* Nuevo: bordes redondeados */
 }
 
 /* --- CABECERA --- */
@@ -86,7 +90,7 @@ body {
     width: 100%;
     box-sizing: border-box;
 
-    background-image: url('https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg?auto=compress&cs=tinysrgb&w=600');
+    background-image: url('C:\Users\Usuario\OneDrive\PWA\urbana\fondo radio negro.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -162,13 +166,13 @@ body {
 /* --- PIE DE PÁGINA --- */
 .app-footer {
     padding: 15px 20px;
-    background-color: var(--dark-blue);
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* Cambiado a negro con transparencia */
+    background-color: rgba(0, 0, 0, 0.6); /* Negro con 60% de opacidad */
+    text-align: center;
+    /* Ajuste de la sombra para que se vea sutil en un fondo transparente */
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.6); /* Sombra un poco más pronunciada y oscura */
+    backdrop-filter: blur(2px); /* Opcional: Un pequeño desenfoque al contenido detrás */
+    -webkit-backdrop-filter: blur(2px); /* Para compatibilidad con Safari */
 }
 
 .social-icons {
