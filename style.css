@@ -24,12 +24,14 @@ html, body {
 
 body {
     display: flex; /* Habilita Flexbox en el body */
-    justify-content: center; /* Centra horizontalmente el contenido principal (.container) */
-    align-items: center;   /* Centra verticalmente el contenido principal (.container) */
+    /* Centra horizontalmente el contenido principal (el .container) */
+    /* Usamos 'place-items: center;' para centrado horizontal y vertical en una sola propiedad */
+    place-items: center; 
+    /* Eliminamos justify-content y align-items para usar place-items */
 }
 
 .container {
-    width: 100%;
+    width: 100%; /* El contenedor ocupa todo el ancho disponible para ser centrado */
     max-width: 400px; /* Ancho máximo para simular un móvil */
     height: 100%; /* Ocupa toda la altura del body/html */
     display: flex;
@@ -39,6 +41,9 @@ body {
     overflow: hidden; /* Asegura que no haya desbordamientos internos */
     position: relative; /* Contexto de apilamiento para los elementos de la app */
     z-index: 1; /* Asegura que esté por debajo del menú y overlay */
+    
+    /* Centrado adicional con margin: auto para mayor robustez */
+    margin: 0 auto;
 }
 
 /* --- CABECERA --- */
@@ -182,35 +187,35 @@ body {
     filter: none;
 }
 
-/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY (¡LA SECCIÓN CRÍTICA A REVISAR!) --- */
+/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY --- */
 
 /* Overlay (fondo oscuro que cubre la app cuando el menú está abierto) */
 .menu-overlay {
-    position: fixed; /* Asegura que se superpone a todo el viewport */
+    position: fixed;
     top: 0;
     left: 0;
-    height: 100%; /* Ocupa toda la altura del viewport */
-    width: 100%; /* Ocupa todo el ancho del viewport */
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo negro semitransparente */
-    z-index: 99; /* Por debajo del menú principal (100) */
-    opacity: 0; /* Oculto por defecto */
-    visibility: hidden; /* No interactivo por defecto */
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 /* Menú lateral (el panel que se desliza) */
 .side-menu {
-    position: fixed; /* Asegura que se superpone a todo el viewport */
+    position: fixed;
     top: 0;
-    left: -250px; /* Oculto completamente fuera de pantalla por defecto (ancho del menú) */
-    height: 100%; /* Ocupa toda la altura del viewport */
+    left: -250px; /* Oculto completamente fuera de pantalla por defecto */
+    height: 100%;
     width: 250px; /* Ancho del menú cuando está abierto */
-    background-color: var(--menu-bg-color); /* Color de fondo del menú */
-    z-index: 100; /* Por encima del overlay */
-    overflow-x: hidden; /* Evita scroll horizontal dentro del menú */
-    transition: left 0.3s ease-in-out; /* Transición para el deslizamiento */
-    padding-top: 60px; /* Espacio para el botón de cerrar */
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Sombra para que destaque */
+    background-color: var(--menu-bg-color);
+    z-index: 100;
+    overflow-x: hidden;
+    transition: left 0.3s ease-in-out;
+    padding-top: 60px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Botón de cerrar (la X) dentro del menú */
@@ -221,7 +226,7 @@ body {
     font-size: 36px;
     margin-left: 50px;
     text-decoration: none;
-    color: var(--menu-item-color); /* Color de la X */
+    color: var(--menu-item-color);
     transition: 0.3s;
 }
 .side-menu .closebtn:hover {
@@ -231,10 +236,10 @@ body {
 /* Elementos del menú (los enlaces) */
 .side-menu .menu-items a {
     padding: 8px 8px 8px 32px;
-    text-decoration: none !important; /* ¡FUERZA QUITAR SUBRAYADO! */
+    text-decoration: none !important;
     font-size: 25px;
-    color: var(--menu-item-color) !important; /* ¡FUERZA EL COLOR! */
-    display: block; /* Ocupa todo el ancho disponible */
+    color: var(--menu-item-color) !important;
+    display: block;
     transition: 0.3s;
 }
 .side-menu .menu-items a:hover {
@@ -244,13 +249,13 @@ body {
 
 /* Estado "abierto" del menú */
 .side-menu.open {
-    left: 0; /* Se desliza hasta la posición 0 (visible) */
+    left: 0;
 }
 
 /* Estado "abierto" del overlay */
 .menu-overlay.open {
-    opacity: 1; /* Completamente visible */
-    visibility: visible; /* Vuelve a ser interactivo */
+    opacity: 1;
+    visibility: visible;
 }
 
 /* --- RESPONSIVE: Ajustes para pantallas pequeñas (móviles) --- */
@@ -268,11 +273,11 @@ body {
     }
     
     .side-menu {
-        width: 80vw; /* El menú ocupa el 80% del ancho de la pantalla */
-        left: -80vw; /* Oculto al 80% del viewport width cuando está cerrado */
+        width: 80vw;
+        left: -80vw;
     }
     .side-menu.open {
-        left: 0; /* Se desliza hasta la posición 0 (visible) */
+        left: 0;
     }
 }
 @media screen and (max-height: 450px) {
