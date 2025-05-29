@@ -135,17 +135,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const openMenu = () => {
         sideMenu.classList.add('open');
         menuOverlay.classList.add('open');
-        // Ocultar otras opciones que no sean el timer si el timer está visible
-        // Ocultar la sección de la alarma si existe
-        // ...
-        // NO HACEMOS NADA AQUÍ CON timerOptionsDiv.classList.remove('hidden'); AÚN
     };
 
     const closeMenu = () => {
         sideMenu.classList.remove('open');
         menuOverlay.classList.remove('open');
-        // Ocultar la interfaz del timer cuando se cierra el menú
-        timerOptionsDiv.classList.remove('active'); // Oculta los botones del timer
+        // Asegurarse de ocultar la interfaz del timer cuando se cierra el menú principal
+        timerOptionsDiv.classList.remove('active'); 
     };
 
     menuIcon.addEventListener('click', openMenu);
@@ -167,12 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert("La radio se ha apagado automáticamente por el Timer.");
             }
             cancelTimer(); 
-            closeMenu();
+            closeMenu(); // Cierra el menú después de que el timer se active
         }, minutes * 60 * 1000);
 
         console.log(`Timer de apagado programado para ${minutes} minutos.`);
         alert(`La radio se apagará en ${minutes} minutos.`);
-        closeMenu(); // Cierra el menú DESPUÉS de programar el timer
+        closeMenu(); // Cierra el menú DESPUÉS de programar el timer y mostrar el alert
         
         timerCountdownDisplay.classList.remove('hidden');
         cancelTimerBtn.classList.remove('hidden');
@@ -222,12 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelTimerBtn.addEventListener('click', cancelTimer);
 
     // --- Control de la Interfaz del Timer al hacer clic en la opción del menú ---
+    // Esta es la parte CLAVE para mostrar la interfaz del Timer
     menuTimerOption.addEventListener('click', (e) => {
         e.preventDefault(); 
-        // Mostrar la interfaz del timer (los botones de 15, 30, etc.)
-        timerOptionsDiv.classList.add('active'); // Añadimos la clase 'active'
-        // Puedes optar por no cerrar el menú aquí si quieres que la interfaz del timer quede a la vista
-        // closeMenu(); // Opcional: cierra el menú una vez que se hace clic en la opción "Timer"
+        console.log("Clic en 'Timer de Apagado'. Mostrando interfaz del timer.");
+        // Ocultar otras secciones del menú si existieran aquí
+        // ...
+        timerOptionsDiv.classList.add('active'); // Mostrar la interfaz de los botones del timer
+        // Puedes optar por no cerrar el menú principal aquí si quieres que el usuario vea los botones del timer y otras opciones del menú
+        // closeMenu(); // Descomenta esta línea si quieres que el menú principal se cierre inmediatamente al seleccionar "Timer de Apagado"
     });
 
     // --- Placeholder para la Alarma (funcionalidad pendiente) ---
@@ -237,6 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     menuAlarmOption.addEventListener('click', (e) => {
         e.preventDefault();
+        // Ocultar la interfaz del timer si estuviera activa
+        timerOptionsDiv.classList.remove('active'); 
         setupAlarm();
     });
     
