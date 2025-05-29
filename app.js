@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Variables de Estado Globales ---
     let isPlaying = false;
-    const streamUrl = "https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream"; // URL de tu streaming
+    const streamUrl = "http://nodo10.arcast.live:8500/enlace.mp3"; // URL de tu streaming
     let currentRadioStreamElement = null; // Referencia al elemento de audio activo
 
     // Variables para el Timer
