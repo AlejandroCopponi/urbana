@@ -1,22 +1,22 @@
 /* Variables para los colores */
 :root {
-    --primary-blue: #007bff; /* Un azul vibrante para elementos primarios */
-    --dark-blue: #0056b3;    /* Un azul más oscuro para hover y cabeceras/pies */
-    --background-black: #1a1a1a; /* Negro oscuro para el fondo general del body */
-    --app-background-color: #333333; /* Un gris oscuro para el fondo de la app principal */
-    --text-color: #ffffff;     /* Texto blanco por defecto */
-    --light-grey: #cccccc;     /* Gris claro para algunos detalles */
-    --menu-bg-color: #111; /* Color de fondo del menú lateral (casi negro) */
-    --menu-item-color: #818181; /* Color de los enlaces del menú por defecto */
-    --menu-item-hover-color: #f1f1f1; /* Color de los enlaces del menú al pasar el mouse */
+    --primary-blue: #007bff;
+    --dark-blue: #0056b3;
+    --background-black: #1a1a1a;
+    --app-background-color: #333333;
+    --text-color: #ffffff;
+    --light-grey: #cccccc;
+    --menu-bg-color: #111;
+    --menu-item-color: #818181;
+    --menu-item-hover-color: #f1f1f1;
 }
 
 /* --- ESTILOS GENERALES Y LAYOUT DEL CONTENEDOR --- */
 html, body {
     margin: 0;
     padding: 0;
-    width: 100%; /* Asegura que ocupen todo el ancho del viewport */
-    height: 100%; /* Asegura que ocupen toda la altura del viewport */
+    width: 100%;
+    height: 100%;
     overflow: hidden; /* Evita cualquier scroll no deseado */
     font-family: Arial, sans-serif;
     color: var(--text-color);
@@ -24,26 +24,34 @@ html, body {
 }
 
 body {
-    display: grid; /* Usamos Grid para centrar un solo item de forma robusta */
-    place-items: center; /* Centra el contenido (el .container) tanto horizontal como verticalmente */
+    /* Ya no necesitamos display: grid o flex en el body, el wrapper se encarga */
+    position: relative; /* Base para elementos fijos si los hubiera, pero ya no para el wrapper */
+}
+
+/* NUEVO WRAPPER PARA CENTRAR LA APP */
+#app-wrapper {
+    position: absolute; /* Posicionamiento absoluto */
+    top: 50%; /* A la mitad del alto */
+    left: 50%; /* A la mitad del ancho */
+    transform: translate(-50%, -50%); /* Ajusta para centrar el elemento por sí mismo */
+    width: 100vw; /* Ocupa todo el ancho del viewport */
+    height: 100vh; /* Ocupa todo el alto del viewport */
+    max-width: 400px; /* Límite de ancho para la app */
+    max-height: 800px; /* Límite de alto para la app */
+    overflow: hidden; /* Asegura que el contenido no se salga del wrapper */
+    z-index: 1; /* Asegura que esté debajo del menú */
 }
 
 .container {
-    width: 100vw; /* El contenedor ocupa el 100% del ANCHO DEL VIEWPORT */
-    height: 100vh; /* El contenedor ocupa el 100% del ALTO DEL VIEWPORT */
-    max-width: 400px; /* Pero con un máximo de 400px de ancho */
-    max-height: 800px; /* Opcional: Un máximo de altura para pantallas grandes */
-    
+    width: 100%; /* Ocupa el 100% del #app-wrapper */
+    height: 100%; /* Ocupa el 100% del #app-wrapper */
     display: flex;
     flex-direction: column;
-    background-color: var(--app-background-color);
+    background-color: var(--app-background-color); /* Fondo del área principal de la app */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    overflow: hidden; /* Asegura que no haya desbordamientos internos */
-    position: relative; /* Contexto de apilamiento para los elementos de la app */
-    z-index: 1; /* Asegura que esté por debajo del menú y overlay */
-    
-    /* En pantallas grandes, esto centrará el contenedor dentro de los 100vw/100vh del body */
-    margin: auto; 
+    overflow: hidden;
+    position: relative;
+    /* Ya no necesitamos margin: auto aquí, lo centra el #app-wrapper */
 }
 
 /* --- CABECERA --- */
@@ -187,7 +195,7 @@ body {
     filter: none;
 }
 
-/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY (¡Revisión Final para visibilidad!) --- */
+/* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY --- */
 
 /* Overlay (fondo oscuro que cubre la app cuando el menú está abierto) */
 .menu-overlay {
@@ -199,7 +207,7 @@ body {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 99;
     opacity: 0;
-    visibility: hidden; /* ¡Clave para que no sea interactivo cuando está oculto! */
+    visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
@@ -207,19 +215,17 @@ body {
 .side-menu {
     position: fixed;
     top: 0;
-    left: -250px; /* Oculto por defecto */
+    left: -250px;
     height: 100%;
-    width: 250px; /* Ancho del menú cuando está abierto */
+    width: 250px;
     background-color: var(--menu-bg-color);
     z-index: 100;
     overflow-x: hidden;
-    transition: left 0.3s ease-in-out;
+    transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
     padding-top: 60px;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-    /* ¡Clave para que no sea interactivo y no visible cuando está oculto! */
-    visibility: hidden; /* Agregado para asegurar que no se vea */
-    opacity: 0; /* Agregado para asegurar que no se vea */
-    transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    visibility: hidden; /* Oculto por defecto */
+    opacity: 0; /* Oculto por defecto */
 }
 
 /* Botón de cerrar (la X) dentro del menú */
@@ -254,8 +260,8 @@ body {
 /* Estado "abierto" del menú */
 .side-menu.open {
     left: 0;
-    visibility: visible; /* Se hace visible al abrir */
-    opacity: 1; /* Se hace completamente opaco al abrir */
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Estado "abierto" del overlay */
@@ -266,12 +272,16 @@ body {
 
 /* --- RESPONSIVE: Ajustes para pantallas pequeñas (móviles) --- */
 @media (max-width: 600px) {
-    .container {
+    #app-wrapper {
+        max-width: none; /* No hay límite de ancho en móviles */
+        max-height: none; /* No hay límite de alto en móviles */
         width: 100vw;
         height: 100vh;
-        max-width: none;
+    }
+    .container {
+        width: 100%; /* Ocupa el 100% del wrapper */
+        height: 100%; /* Ocupa el 100% del wrapper */
         border-radius: 0;
-        margin: 0;
     }
 
     .logo-placeholder {
