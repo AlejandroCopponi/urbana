@@ -270,17 +270,18 @@ body {
 }
 
 /* --- ESTILOS PARA EL TIMER DE APAGADO --- */
-
 .timer-options {
     padding: 20px 32px;
     border-top: 1px solid #333; /* Separador */
     margin-top: 20px;
     text-align: center;
-    display: none; /* OCULTO POR DEFECTO */
+    /* ¡CAMBIO DE DEPURACIÓN: HACERLO SIEMPRE VISIBLE! */
+    display: block !important; /* Ahora siempre visible */
 }
 
-.timer-options.active { /* Clase para mostrar la interfaz del timer */
-    display: block !important; /* ¡FUERZA LA VISIBILIDAD! */
+/* La regla .timer-options.active ya no es necesaria para la visibilidad con este cambio, pero la mantenemos */
+.timer-options.active {
+    /* display: block !important; */ /* No es necesario aquí con la regla de arriba */
 }
 
 .timer-options p {
