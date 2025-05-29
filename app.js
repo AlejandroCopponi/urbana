@@ -251,6 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentProgram = 'Música Continua'; // Programa por defecto
 
         // Personaliza esta programación a tu gusto según la hora local de Venado Tuerto (GMT-3)
+        // La hora actual es: Thursday, May 29, 2025 at 12:18:40 AM -03.
+        // A las 00:18 (media noche), debería mostrar "Selección Musical Nocturna".
         if (hour >= 7 && hour < 10) { 
             currentProgram = 'El Despertador de la Mañana';
         } else if (hour >= 10 && hour < 13) { 
@@ -261,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentProgram = 'Conduciendo la Tarde';
         } else if (hour >= 19 && hour < 22) { 
             currentProgram = 'Noches de Rock Nacional';
-        } else if (hour >= 22 || hour < 7) { 
+        } else if (hour >= 22 || hour < 7) { // De 22:00 a 06:59
             currentProgram = 'Selección Musical Nocturna';
         }
 
