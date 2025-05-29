@@ -270,16 +270,17 @@ body {
 }
 
 /* --- ESTILOS PARA EL TIMER DE APAGADO --- */
+
 .timer-options {
     padding: 20px 32px;
     border-top: 1px solid #333; /* Separador */
     margin-top: 20px;
     text-align: center;
-    display: none; /* ¡OCULTO POR DEFECTO! */
+    display: none; /* OCULTO POR DEFECTO */
 }
 
 .timer-options.active { /* Clase para mostrar la interfaz del timer */
-    display: block;
+    display: block !important; /* ¡FUERZA LA VISIBILIDAD! */
 }
 
 .timer-options p {
@@ -287,6 +288,8 @@ body {
     color: var(--light-grey);
     margin-bottom: 15px;
 }
+
+
 
 .timer-buttons button {
     background-color: var(--dark-blue);
