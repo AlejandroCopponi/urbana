@@ -5,31 +5,40 @@
     --background-black: #1a1a1a; /* Negro oscuro para el fondo general */
     --app-background-color: #333333; /* Un gris oscuro para el fondo de la app */
     --text-color: #ffffff;     /* Texto blanco */
-    --light-grey: #cccccc;     /* Gris claro para algunos detalles */
+    --menu-text-color: #818181; /* Color por defecto de los items del menu */
+    --menu-hover-color: #f1f1f1; /* Color al pasar el mouse por items del menu */
+    --menu-bg-color: #111; /* Color de fondo del menu */
+}
+
+/* --- ESTILOS GENERALES Y LAYOUT DEL CONTENEDOR --- */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Asegura que html y body ocupen toda la altura */
+    overflow: hidden; /* Evita cualquier scroll no deseado en html/body */
+    font-family: Arial, sans-serif;
+    color: var(--text-color);
+    background-color: var(--background-black); /* Fondo negro general del body */
 }
 
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center; /* Centra el .container horizontalmente en la pantalla */
-    align-items: center; /* Centra el .container verticalmente en la pantalla */
-    min-height: 100vh; /* Asegura que el body ocupe toda la altura de la vista */
-    background-color: var(--background-black); /* Fondo sólido NEGRO para el BODY */
-    color: var(--text-color);
-    overflow: hidden; /* Evita barras de desplazamiento no deseadas en el cuerpo */
+    display: flex; /* Habilita Flexbox en el body */
+    justify-content: center; /* Centra horizontalmente el contenido principal (.container) */
+    align-items: center;   /* Centra verticalmente el contenido principal (.container) */
+    position: relative; /* Importante: crea un contexto de apilamiento para los hijos fixed si es necesario */
 }
 
 .container {
     width: 100%;
     max-width: 400px; /* Ancho máximo para simular un móvil */
-    height: 100vh; /* Ocupa toda la altura de la vista */
+    height: 100%; /* Ocupa toda la altura del body/html */
     display: flex;
-    flex-direction: column; /* Apila los elementos (header, main, footer) verticalmente */
-    background-color: var(--app-background-color); /* Color de fondo general de la aplicación */
+    flex-direction: column; /* Apila los elementos (header, main, footer) */
+    background-color: var(--app-background-color); /* Fondo del área principal de la app */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    overflow: hidden; /* Asegura que no haya desbordamientos */
+    overflow: hidden; /* Asegura que no haya desbordamientos internos */
+    position: relative; /* Contexto de apilamiento para los elementos de la app */
+    z-index: 1; /* Asegura que esté por debajo del menú y overlay */
 }
 
 /* --- CABECERA --- */
@@ -41,148 +50,62 @@ body {
     background-color: var(--dark-blue); /* Fondo de la cabecera */
     color: var(--text-color);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%; /* Ocupa todo el ancho del contenedor */
-    box-sizing: border-box; /* Incluye padding en el width */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .menu-icon {
     font-size: 28px;
     cursor: pointer;
     padding: 5px;
-    line-height: 1; /* Para alinear bien el icono */
+    line-height: 1;
+    color: var(--text-color); /* Asegura que el icono de hamburguesa sea blanco */
 }
 
-/* --- SECCIÓN PRINCIPAL: CON ESTE FONDO! --- */
+/* --- SECCIÓN PRINCIPAL: Contiene el Logo, Reproductor y Programación --- */
 .main-content {
-    flex-grow: 1; /* Ocupa el espacio restante disponible entre header y footer */
+    flex-grow: 1;
     display: flex;
-    flex-direction: column; /* Apila los elementos (logo, player, program) verticalmente */
-    justify-content: center; /* Centra verticalmente los elementos dentro de main-content */
-    align-items: center; /* Centra horizontalmente los elementos dentro de main-content */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
     text-align: center;
-    width: 100%; /* Asegura que main-content ocupe todo el ancho */
-    box-sizing: border-box; /* Incluye padding en el width/height */
+    width: 100%;
+    box-sizing: border-box;
 
-    /* ¡NUEVO! Fondo con imagen de micrófono condensador transparente */
-    background-image: url('https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg?auto=compress&cs=tinysrgb&w=600'); /* ¡URL de tu imagen! */
-    background-size: cover; /* Cubre todo el fondo del main-content */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que se repita */
-    background-blend-mode: multiply; /* Mezcla la imagen con el color de fondo */
-    background-color: rgba(0, 0, 0, 0.6); /* Negro con 60% de transparencia como base */
+    background-image: url('https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg?auto=compress&cs=tinysrgb&w=600');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-blend-mode: multiply;
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .logo-placeholder {
-    width: 90%; /* Ocupa un 90% del ancho del main-content */
-    max-width: 250px; /* Ancho máximo para el logo */
-    height: 30vh; /* Al menos 30% de la altura de la ventana */
-    background-color: #444; /* Un color grisáceo temporal */
+    width: 90%;
+    max-width: 250px;
+    height: 30vh;
+    background-color: #444; /* Fondo temporal para el logo */
     color: var(--light-grey);
-    font-size: 2.5em; /* Tamaño de fuente más grande para el texto [LOGO] */
+    font-size: 2.5em;
     font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-radius: 5px; /* Opcional: para darle un poco de forma */
-    margin-bottom: 30px; /* Espacio debajo del logo antes del reproductor */
+    border-radius: 5px;
+    margin-bottom: 30px;
 }
 
 .player-controls {
-    margin-bottom: 20px; /* Espacio debajo del reproductor antes del programa */
+    margin-bottom: 20px;
 }
 
 #play-pause-btn {
-    background-color: transparent; /* Sin fondo */
+    background-color: transparent;
     color: var(--primary-blue); /* Color de la flecha */
-    font-size: 5em; /* Aumenta el tamaño del icono */
+    font-size: 5em;
     border: none;
     cursor: pointer;
-    outline: none; /* Quita el borde al enfocar */
-    transition: color 0.3s ease, transform 0.1s ease;
-    padding: 0; /* Quita el padding por defecto del botón */
-    line-height: 1; /* Ajusta la altura de línea para centrar el icono verticalmente */
-}
-
-#play-pause-btn:hover {
-    color: var(--dark-blue);
-    transform: scale(1.1);
-}
-
-#play-pause-btn:active {
-    transform: scale(1.0);
-}
-
-/* Icono de pausa */
-.pause-button {
-    font-size: 4em; /* Ajuste para el icono de pausa */
-}
-
-.current-program {
-    font-size: 1.2em;
-    color: var(--light-grey);
-}
-
-#program-name {
-    font-weight: bold;
-    color: var(--text-color);
-}
-
-/* --- PIE DE PÁGINA --- */
-.app-footer {
-    padding: 15px 20px;
-    background-color: var(--dark-blue);
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%; /* Ocupa todo el ancho */
-    box-sizing: border-box; /* Incluye padding en el width */
-    display: flex; /* Habilitamos flexbox */
-    justify-content: center; /* Centra el contenido (iconos) horizontalmente */
-    align-items: center; /* Centra el contenido (iconos) verticalmente */
-}
-
-.social-icons {
-    display: flex;
-    justify-content: center; /* Centra los iconos dentro de social-icons */
-    align-items: center;
-}
-
-.social-icons a {
-    margin: 0 15px; /* Más espacio entre iconos */
-    display: inline-block;
-}
-
-.social-icons img {
-    width: 45px; /* Iconos un poco más grandes */
-    height: 45px;
-    filter: none; /* Asegura que NO haya ningún filtro aplicado que los ponga blancos */
-    transition: transform 0.2s ease;
-}
-
-/* --- COLORES DE LOS ICONOS DE REDES SOCIALES --- */
-.social-icons a[aria-label="Facebook"] img {
-    content: url('https://img.icons8.com/color/48/000000/facebook-new.png');
-    filter: none;
-}
-.social-icons a[aria-label="Instagram"] img {
-    content: url('https://img.icons8.com/color/48/000000/instagram-new--v1.png');
-    filter: none;
-}
-.social-icons a[aria-label="WhatsApp"] img {
-    content: url('https://img.icons8.com/color/48/000000/whatsapp--v1.png');
-    filter: none;
-}
-
-/* RESPONSIVE: Ajustes para pantallas pequeñas (móviles) */
-@media (max-width: 600px) {
-    .container {
-        width: 100vw;
-        height: 100vh;
-        max-width: none;
-        border-radius: 0;
-    }
-
-    .logo-placeholder {
-        height: 25vh; /* Ajuste de altura para móviles si es necesario */
-    }
-}
+    outline
