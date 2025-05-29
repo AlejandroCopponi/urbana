@@ -9,7 +9,7 @@
     --menu-bg-color: #111;
     --menu-item-color: #818181;
     --menu-item-hover-color: #f1f1f1;
-    --panel-bg-color: #2a2a2a; /* Nuevo color para el panel */
+    --panel-bg-color: #2a2a2a;
 }
 
 /* --- ESTILOS GENERALES Y LAYOUT DEL CONTENEDOR --- */
@@ -140,16 +140,14 @@ body {
     font-size: 4em;
 }
 
-/* --- NUEVO ESTILO PARA EL CONTADOR DEL TIMER EN EL CUERPO PRINCIPAL --- */
 #main-app-timer-countdown {
     font-size: 1.4em;
     font-weight: bold;
     color: var(--primary-blue);
-    margin-top: 10px; /* Espacio desde el reproductor */
-    margin-bottom: 20px; /* Espacio antes de la programación */
-    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Pequeño brillo */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
-/* --- FIN NUEVO ESTILO --- */
 
 .current-program {
     font-size: 1.2em;
@@ -233,7 +231,7 @@ body {
     overflow-x: hidden;
     transition: left 0.3s ease-in-out, visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
     padding-top: 60px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
     visibility: hidden;
     opacity: 0;
 }
@@ -280,7 +278,7 @@ body {
     visibility: visible;
 }
 
-/* --- NUEVOS ESTILOS PARA EL PANEL FLOTANTE DE SELECCIÓN DEL TIMER --- */
+/* --- ESTILOS PARA EL PANEL FLOTANTE DE SELECCIÓN DEL TIMER --- */
 .selection-panel {
     position: fixed; /* Flota sobre el contenido */
     top: 50%;
@@ -302,7 +300,7 @@ body {
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.selection-panel.open {
+.selection-panel.open { /* Clase para mostrar el panel */
     opacity: 1;
     visibility: visible;
 }
@@ -363,7 +361,7 @@ body {
     background-color: #c82333;
 }
 
-/* Clase para ocultar elementos que se manejan con JS */
+/* Clase para ocultar elementos que se manejan con JS (usado para el contador principal y botón cancelar timer) */
 .hidden {
     display: none !important;
 }
