@@ -300,3 +300,51 @@ body {
     .side-menu { padding-top: 15px; }
     .side-menu .menu-items a { font-size: 18px; }
 }
+/* --- ESTILOS PARA EL TIMER DE APAGADO --- */
+.timer-options {
+    padding: 20px 32px;
+    border-top: 1px solid #333; /* Separador */
+    margin-top: 20px;
+    text-align: center;
+}
+
+.timer-options p {
+    font-size: 1.1em;
+    color: var(--light-grey);
+    margin-bottom: 15px;
+}
+
+.timer-buttons button {
+    background-color: var(--dark-blue);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+}
+
+.timer-buttons button:hover {
+    background-color: var(--primary-blue);
+}
+
+.timer-buttons button.cancel-button {
+    background-color: #dc3545; /* Rojo para cancelar */
+}
+.timer-buttons button.cancel-button:hover {
+    background-color: #c82333;
+}
+
+#timer-countdown {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-top: 20px;
+}
+
+/* Clase para ocultar elementos */
+.hidden {
+    display: none !important;
+}
