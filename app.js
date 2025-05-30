@@ -37,8 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Radio Stream Elemento:", radioStream);
 
     // --- REPRODUCCIÓN AUTOMÁTICA AL ABRIR LA APP ---
-    // Intentar reproducir la radio automáticamente al cargar la PWA.
-    // Los navegadores modernos pueden bloquear el autoplay si no hay interacción previa del usuario.
     try {
         console.log("Intentando reproducción automática al inicio...");
         radioStream.load(); // Cargar el stream
@@ -57,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(error => {
-                // Si la reproducción automática es bloqueada (lo más probable)
                 console.warn("Reproducción automática bloqueada/fallida al inicio:", error.name, error.message);
                 isPlaying = false;
                 playPauseBtn.innerHTML = '▶';
@@ -77,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Botón Play/Pause clicado. isPlaying actual:", isPlaying);
         if (isPlaying) {
             radioStream.pause(); 
-            isPlaying = false; // ¡CRÍTICO! Actualizar el estado a false al pausar.
+            isPlaying = false; 
             playPauseBtn.innerHTML = '▶'; 
             playPauseBtn.classList.remove('pause-button'); 
             playPauseBtn.classList.add('play-button'); 
@@ -86,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("radioStream.readyState:", radioStream.readyState);
         } else {
             console.log("Intentando REPRODUCIR stream..."); 
-            radioStream.load(); // Vuelve a cargar el stream ANTES de intentar reproducir
+            radioStream.load(); 
             console.log("Después de radioStream.load() al hacer clic.");
             console.log("radioStream.readyState (antes de play):", radioStream.readyState);
             console.log("radioStream.paused (antes de play):", radioStream.paused);
@@ -134,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
     radioStream.addEventListener('stalled', () => { console.warn('La descarga del stream se ha detenido inesperadamente (stalled).'); });
     radioStream.addEventListener('waiting', () => { console.log('Esperando que los datos del stream estén disponibles (waiting)...'); });
     radioStream.addEventListener('playing', () => { console.log('El stream está reproduciéndose (playing).'); });
-    radioStream.addEventListener('pause', () => { console.log('El stream ha sido pausado (evento pause).'); }); // Nuevo log
-    radioStream.addEventListener('ended', () => { console.log('El stream ha terminado (evento ended).'); }); // Nuevo log
+    radioStream.addEventListener('pause', () => { console.log('El stream ha sido pausado (evento pause).'); }); 
+    radioStream.addEventListener('ended', () => { console.log('El stream ha terminado (evento ended).'); });
 
 
     // --- Lógica del Menú Lateral ---
@@ -143,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.addEventListener('click', () => {
             sideMenu.classList.add('open');
             menuOverlay.classList.add('open');
-            // Asegúrate de que los paneles de alarma y timer estén cerrados al abrir el menú
             selectionPanel.classList.remove('open'); 
             alarmPanel.classList.remove('open');
         });
@@ -158,12 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Lógica para abrir/cerrar Paneles (Genérico) ---
-    // Esta función nos ayudará a abrir un panel y cerrar otros si están abiertos.
     function openPanel(panelToOpen) {
         sideMenu.classList.remove('open');
         menuOverlay.classList.remove('open');
 
-        // Cerrar todos los paneles antes de abrir el deseado
         selectionPanel.classList.remove('open');
         alarmPanel.classList.remove('open');
 
@@ -172,9 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica del Timer de Apagado por Hora ---
     timerOptionInMenu.addEventListener('click', () => {
-        openPanel(selectionPanel); // Usa la función genérica
+        openPanel(selectionPanel); 
         
-        // Lógica específica del Timer de Apagado
         if (!countdownInterval) { 
             cancelTimerBtn.classList.add('hidden'); 
         } else { 
@@ -233,7 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (remainingTime <= 0) {
                 mainAppTimerCountdown.textContent = '00:00:00';
                 clearInterval(countdownInterval);
-                // Asegurarse de que el timerTimeout ya ha apagado la radio o lo hará
             } else {
                 const totalSeconds = Math.floor(remainingTime / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
@@ -258,26 +250,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica del Panel de Alarma ---
     alarmOptionInMenu.addEventListener('click', () => {
-        openPanel(alarmPanel); // Usa la función genérica para abrir el panel de alarma
+        openPanel(alarmPanel); 
 
-        // Lógica específica del Panel de Alarma
-        if (!isAlarmActive) { // Si no hay una alarma activa
+        if (!isAlarmActive) { 
             cancelAlarmBtn.classList.add('hidden');
         } else {
             cancelAlarmBtn.classList.remove('hidden');
         }
 
-        // Establecer hora por defecto en el input de la alarma (ej. 07:00 AM)
-        // Puedes ajustar esto a la hora actual + X minutos o una hora predefinida
         const now = new Date();
-        const defaultAlarmHour = 7; // Por ejemplo, 7 AM
-        const defaultAlarmMinute = 0; // 00 minutos
+        const defaultAlarmHour = 7; 
+        const defaultAlarmMinute = 0; 
         const defaultAlarmTime = `${String(defaultAlarmHour).padStart(2, '0')}:${String(defaultAlarmMinute).padStart(2, '0')}`;
         alarmSetTimeInput.value = defaultAlarmTime;
     });
 
     alarmPanelCloseBtn.addEventListener('click', () => {
-        alarmPanel.classList.remove('open'); // Cierra el panel de alarma
+        alarmPanel.classList.remove('open'); 
     });
 
     setAlarmBtn.addEventListener('click', () => {
@@ -293,9 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const now = new Date();
         let targetDate = new Date();
-        targetDate.setHours(targetHour, targetMinute, 0, 0); // Establece la hora y minutos de la alarma
+        targetDate.setHours(targetHour, targetMinute, 0, 0); 
 
-        // Si la hora de la alarma ya pasó hoy, programarla para mañana
         if (targetDate.getTime() <= now.getTime()) {
             targetDate.setDate(targetDate.getDate() + 1);
         }
@@ -306,15 +294,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Limpiar cualquier alarma existente
         clearTimeout(alarmTimeout);
 
-        // Iniciar el timeout principal para la alarma
         alarmTimeout = setTimeout(() => {
-            // Lógica para cuando suene la alarma:
             console.log('¡Alarma sonando! Intentando reproducir la radio.');
             if (radioStream.paused) {
-                radioStream.load(); // Cargar el stream antes de reproducir
+                radioStream.load(); 
                 radioStream.play()
                     .then(() => {
                         isPlaying = true;
@@ -330,53 +315,103 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alert('¡Es hora! La radio ya estaba sonando.');
             }
-            isAlarmActive = false; // La alarma ha sonado, ya no está activa
-            cancelAlarmBtn.classList.add('hidden'); // Ocultar botón de cancelar
+            isAlarmActive = false; 
+            cancelAlarmBtn.classList.add('hidden'); 
         }, timeDiffMs);
 
-        isAlarmActive = true; // Marcar la alarma como activa
-        cancelAlarmBtn.classList.remove('hidden'); // Mostrar botón de cancelar
+        isAlarmActive = true; 
+        cancelAlarmBtn.classList.remove('hidden'); 
         alert(`Alarma establecida para las ${timeValue}.`);
         console.log(`Alarma establecida para las ${timeValue}.`);
-        alarmPanel.classList.remove('open'); // Cierra el panel de alarma después de configurar
+        alarmPanel.classList.remove('open'); 
     });
 
     cancelAlarmBtn.addEventListener('click', () => {
-        clearTimeout(alarmTimeout); // Detiene la alarma
-        isAlarmActive = false; // Marcar la alarma como inactiva
-        cancelAlarmBtn.classList.add('hidden'); // Ocultar el botón de cancelar
+        clearTimeout(alarmTimeout); 
+        isAlarmActive = false; 
+        cancelAlarmBtn.classList.add('hidden'); 
         alert('Alarma cancelada.');
         console.log('Alarma cancelada.');
-        alarmPanel.classList.remove('open'); // Cierra el panel
+        alarmPanel.classList.remove('open'); 
     });
 
+    // --- Lógica de la Programación Actual (MODIFICADA para días de la semana) ---
 
-    // --- Lógica de la Programación Actual ---
+    // Programación de Lunes a Viernes (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
+    const weekdaySchedule = [
+        { startHour: 7, startMinute: 0, name: 'La Primera Mañana con Damián Copponi' }, // 07:00 - 09:59
+        { startHour: 10, startMinute: 0, name: 'Mañana es Tarde con Ale Copponi' },   // 10:00 - 12:59
+        { startHour: 13, startMinute: 0, name: 'Las tardes en Urbana' },     // 13:00 - 18:59
+        { startHour: 19, startMinute: 0, name: 'Música Seleccionada' },     // 19:00 - 21:59
+        { startHour: 22, startMinute: 0, name: 'Noches de Rock Nacional' },  // 12:00 - 06:59
+    ];
+
+    // Programación de Sábados
+    const saturdaySchedule = [
+        { startHour: 0, startMinute: 0, name: 'Findes en Urbana - Aspen Classic' },
+    ];
+
+    // Programación de Domingos
+    const sundaySchedule = [
+            { startHour: 0, startMinute: 0, name: 'Findes en Urbana - Aspen Classic' },
+    ];
+
+
     const updateProgram = () => {
         const now = new Date();
-        const hour = now.getHours(); 
-        let currentProgram = 'Música Continua'; 
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentDay = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
 
-        // Puedes personalizar esta programación a tu gusto
-        if (hour >= 7 && hour < 10) {
-            currentProgram = 'El Despertador de la Mañana';
-        } else if (hour >= 10 && hour < 13) {
-            currentProgram = 'Magazine Radial del Día';
-        } else if (hour >= 13 && hour < 16) {
-            currentProgram = 'Noticias al Mediodía';
-        } else if (hour >= 16 && hour < 19) {
-            currentProgram = 'Conduciendo la Tarde';
-        } else if (hour >= 19 && hour < 22) {
-            currentProgram = 'Noches de Rock Nacional';
-        } else if (hour >= 22 || hour < 7) { // De 22:00 a 06:59
-            currentProgram = 'Selección Musical Nocturna';
+        let activeSchedule = [];
+        let currentProgramName = 'Programación Desconocida';
+
+        // Seleccionar la parrilla de programación correcta según el día de la semana
+        if (currentDay >= 1 && currentDay <= 5) { // Lunes a Viernes
+            activeSchedule = weekdaySchedule;
+        } else if (currentDay === 6) { // Sábado
+            activeSchedule = saturdaySchedule;
+        } else if (currentDay === 0) { // Domingo
+            activeSchedule = sundaySchedule;
         }
-        programNameSpan.textContent = currentProgram;
+
+        // Si no se encontró ninguna parrilla (lo cual no debería pasar con los if/else if)
+        if (activeSchedule.length === 0) {
+            programNameSpan.textContent = currentProgramName;
+            return;
+        }
+
+        // Iterar sobre la parrilla de programación activa para encontrar el programa actual
+        for (let i = 0; i < activeSchedule.length; i++) {
+            const program = activeSchedule[i];
+            const nextProgram = activeSchedule[i + 1];
+
+            // Compara la hora actual con el inicio del programa
+            // Nota: Aquí se maneja el caso de que el último programa vaya hasta la medianoche
+            if (currentHour > program.startHour || 
+               (currentHour === program.startHour && currentMinute >= program.startMinute)) {
+                
+                // Si hay un siguiente programa, verifica que la hora actual sea antes del inicio del siguiente
+                if (nextProgram) {
+                    if (currentHour < nextProgram.startHour || 
+                       (currentHour === nextProgram.startHour && currentMinute < nextProgram.startMinute)) {
+                        currentProgramName = program.name;
+                        break; 
+                    }
+                } else {
+                    // Si es el último programa de la lista, dura hasta el final del día
+                    currentProgramName = program.name;
+                    break;
+                }
+            }
+        }
+        
+        programNameSpan.textContent = currentProgramName;
     };
 
     // Actualiza el programa al cargar la página
     updateProgram();
-    // Actualiza el programa cada minuto (puedes ajustar el intervalo)
-    setInterval(updateProgram, 60 * 1000); // 60 segundos * 1000 milisegundos
+    // Actualiza el programa cada minuto
+    setInterval(updateProgram, 60 * 1000); 
 
 });
