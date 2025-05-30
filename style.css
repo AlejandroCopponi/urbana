@@ -144,47 +144,58 @@ body {
 }
 /* ... el resto de tu CSS para .main-content y abajo ... */
 
+
 #play-pause-btn {
-    background-color: transparent; 
+    background-color: transparent;
     border: none;
     cursor: pointer;
     outline: none;
-    padding: 0; 
+    padding: 0;
     line-height: 1;
-    
-    font-size: 5em; 
-    font-weight: bold; 
 
-    /* --- EFECTO DEGRADADO AZUL/CELESTE DE AFUERA HACIA ADENTRO --- */
-    background: radial-gradient(circle at center, #E0FFFF 0%, var(--primary-blue) 40%, var(--dark-blue) 80%, #003366 100%);
-    -webkit-background-clip: text; 
-    background-clip: text; 
-    color: transparent; 
+    font-size: 5em;
+    font-weight: bold;
 
-    /* --- EFECTO 3D CON SOMBRAS DE TEXTO (mismos valores para mantener la profundidad) --- */
-    text-shadow: 
-        2px 2px 3px rgba(0, 0, 0, 0.4), 
-        -1px -1px 2px rgba(255, 255, 255, 0.2); 
-    
-    transition: transform 0.2s ease-out, text-shadow 0.2s ease-out;
+    /* Color celeste sólido */
+    color: var(--primary-blue);
+
+    /* ELIMINADAS: Propiedades de degradado y transparencia del texto */
+    /* background: radial-gradient(...) */
+    /* -webkit-background-clip: text; */
+    /* background-clip: text; */
+    /* color: transparent; */
+
+    /* ELIMINADA: Sombra de texto */
+    text-shadow: none;
+
+    /* NUEVO: Borde con efecto 3D usando box-shadow */
+    box-shadow:
+        2px 2px 5px rgba(0, 0, 0, 0.3), /* Sombra inferior derecha */
+        -2px -2px 5px rgba(255, 255, 255, 0.2); /* Resalte superior izquierda */
+
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Incluimos transición para la sombra */
 }
 
 #play-pause-btn:hover {
-    transform: scale(1.1); 
-    text-shadow: 
-        3px 3px 5px rgba(0, 0, 0, 0.5), 
-        -2px -2px 3px rgba(255, 255, 255, 0.3); 
+    transform: scale(1.1);
+    /* MODIFICADO: Intensificamos el efecto 3D en hover */
+    box-shadow:
+        3px 3px 7px rgba(0, 0, 0, 0.4),
+        -3px -3px 7px rgba(255, 255, 255, 0.3);
+    text-shadow: none; /* Aseguramos que no haya sombra de texto */
 }
 
 #play-pause-btn:active {
-    transform: scale(0.95); 
-    text-shadow: 
-        1px 1px 2px rgba(0, 0, 0, 0.2), 
-        -0.5px -0.5px 1px rgba(255, 255, 255, 0.1); 
+    transform: scale(0.95);
+    /* MODIFICADO: Ligeramente invertimos el efecto para simular presión */
+    box-shadow:
+        1px 1px 3px rgba(0, 0, 0, 0.2),
+        -1px -1px 3px rgba(255, 255, 255, 0.1);
+    text-shadow: none; /* Aseguramos que no haya sombra de texto */
 }
 
 .pause-button {
-    font-size: 4.5em; 
+    font-size: 4.5em;
 }
 
 #main-app-timer-countdown {
