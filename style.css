@@ -29,7 +29,8 @@ body {
     overflow: hidden;
     font-family: Arial, sans-serif;
     color: var(--text-color);
-    background-color: var(--background-black);
+    /* ¡MODIFICADO! El fondo del body debe ser transparente para que la imagen de #app-wrapper se vea */
+    background-color: transparent; 
 
     display: flex;
     justify-content: center;
@@ -45,6 +46,13 @@ body {
     overflow: hidden;
     z-index: 1;
     position: relative; /* ¡CLAVE! Para posicionar el selection-panel correctamente */
+    /* ¡MODIFICADO! La imagen de fondo ahora está en #app-wrapper */
+    background-image: url('fondo radio negro.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-blend-mode: multiply; /* Para oscurecer la imagen y que el texto resalte */
+    background-color: rgba(0, 0, 0, 0.6); /* Color de fondo con opacidad que se mezcla con la imagen */
 }
 
 .container {
@@ -52,7 +60,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background-color: transparent; 
+    background-color: transparent; /* Correcto: transparente para ver el fondo de #app-wrapper */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     position: relative;
@@ -95,12 +103,10 @@ body {
     width: 100%;
     box-sizing: border-box;
 
-    background-image: url('fondo radio negro.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-blend-mode: multiply; 
-    background-color: rgba(0, 0, 0, 0.6); 
+    /* ¡MODIFICADO! Eliminar propiedades de fondo, ya que la imagen está en #app-wrapper */
+    background-image: none; /* Asegúrate de que no haya imagen aquí */
+    background-color: transparent; /* ¡MODIFICADO! Hacerlo transparente para ver el fondo de #app-wrapper */
+    
     z-index: 0; 
     position: relative; /* ¡CLAVE! para que el panel se posicione SOBRE este main-content */
 }
@@ -126,29 +132,46 @@ body {
 }
 
 #play-pause-btn {
-    background-color: transparent;
-    color: var(--primary-blue);
-    font-size: 5em;
+    background-color: transparent; 
     border: none;
     cursor: pointer;
     outline: none;
-    transition: color 0.3s ease, transform 0.1s ease;
-    padding: 0;
+    padding: 0; 
     line-height: 1;
+    
+    font-size: 5em; 
+    font-weight: bold; 
+
+    /* --- EFECTO DEGRADADO AZUL/CELESTE DE AFUERA HACIA ADENTRO --- */
+    background: radial-gradient(circle at center, #E0FFFF 0%, var(--primary-blue) 40%, var(--dark-blue) 80%, #003366 100%);
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    color: transparent; 
+
+    /* --- EFECTO 3D CON SOMBRAS DE TEXTO (mismos valores para mantener la profundidad) --- */
+    text-shadow: 
+        2px 2px 3px rgba(0, 0, 0, 0.4), 
+        -1px -1px 2px rgba(255, 255, 255, 0.2); 
+    
+    transition: transform 0.2s ease-out, text-shadow 0.2s ease-out;
 }
 
 #play-pause-btn:hover {
-    color: var(--dark-blue);
-    transform: scale(1.1);
+    transform: scale(1.1); 
+    text-shadow: 
+        3px 3px 5px rgba(0, 0, 0, 0.5), 
+        -2px -2px 3px rgba(255, 255, 255, 0.3); 
 }
 
 #play-pause-btn:active {
-    transform: scale(1.0);
+    transform: scale(0.95); 
+    text-shadow: 
+        1px 1px 2px rgba(0, 0, 0, 0.2), 
+        -0.5px -0.5px 1px rgba(255, 255, 255, 0.1); 
 }
 
-/* Icono de pausa */
 .pause-button {
-    font-size: 4em;
+    font-size: 4.5em; 
 }
 
 #main-app-timer-countdown {
@@ -173,6 +196,7 @@ body {
 /* --- PIE DE PÁGINA --- */
 .app-footer {
     padding: 15px 20px;
+    /* ¡Correcto! Esta línea ya tiene la transparencia */
     background-color: rgba(0, 0, 0, 0.72); 
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
