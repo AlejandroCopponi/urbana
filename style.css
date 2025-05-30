@@ -89,7 +89,7 @@ body {
     box-sizing: border-box;
 
     /* FONDO PRINCIPAL DE LA APP, ESTO DEBE SER VISIBLE SIEMPRE */
-    background-image: url('https://images.pexels.com/photos/352505/pexels-photo-352505.jpeg?auto=compress&cs=tinysrgb&w=600');
+    background-image: url('fondo radio negro.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
