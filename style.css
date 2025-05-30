@@ -10,38 +10,41 @@
     --menu-item-color: #818181;
     --menu-item-hover-color: #f1f1f1;
     --panel-bg-color: #2a2a2a;
+
+    /* Nuevas variables para alturas de header y footer */
+    --header-height: 70px; /* Ajusta esto si tu header es más alto o más bajo */
+    --footer-height: 75px; /* Ajusta esto si tu footer es más alto o más bajo */
 }
 
 /* --- ESTILOS GENERALES Y LAYOUT DEL CONTENEDOR --- */
 html {
-    height: 100%; /* Asegura que el html ocupe toda la altura */
+    height: 100%;
 }
 
 body {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%; /* Asegura que el body ocupe toda la altura */
+    height: 100%; 
     overflow: hidden;
     font-family: Arial, sans-serif;
     color: var(--text-color);
     background-color: var(--background-black);
 
-    /* --- CAMBIO CLAVE PARA CENTRADO DEL APP-WRAPPER --- */
-    display: flex; /* Usamos flexbox para centrar el contenido */
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #app-wrapper {
-    /* Eliminamos position: absolute y transform para un centrado más simple */
+    /* Aquí se mantiene la base de la PWA */
     width: 100vw;
     height: 100vh;
     max-width: 400px;
     max-height: 800px;
     overflow: hidden;
     z-index: 1;
-    position: relative; /* ¡CLAVE! Necesario para que el selection-panel absolute funcione */
+    position: relative; /* ¡CLAVE! Para posicionar el selection-panel correctamente */
 }
 
 .container {
@@ -53,7 +56,7 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     position: relative;
-    z-index: 1;
+    z-index: 1; /* Asegura que el container se muestre debajo del panel */
 }
 
 /* --- CABECERA --- */
@@ -68,6 +71,8 @@ body {
     width: 100%;
     box-sizing: border-box;
     z-index: 2; 
+    height: var(--header-height); /* Altura fija para el header */
+    flex-shrink: 0; /* Evita que se encoja */
 }
 
 .menu-icon {
@@ -80,7 +85,7 @@ body {
 
 /* --- SECCIÓN PRINCIPAL: Contiene el Logo, Reproductor y Programación --- */
 .main-content {
-    flex-grow: 1;
+    flex-grow: 1; /* Ocupa el espacio restante */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -90,7 +95,6 @@ body {
     width: 100%;
     box-sizing: border-box;
 
-    /* FONDO PRINCIPAL DE LA APP, ESTO DEBE SER VISIBLE SIEMPRE */
     background-image: url('fondo radio negro.jpg');
     background-size: cover;
     background-position: center;
@@ -98,11 +102,7 @@ body {
     background-blend-mode: multiply; 
     background-color: rgba(0, 0, 0, 0.6); 
     z-index: 0; 
-    position: absolute; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position: relative; /* ¡CLAVE! para que el panel se posicione SOBRE este main-content */
 }
 
 .logo-placeholder {
@@ -180,10 +180,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute; 
-    bottom: 0;
-    left: 0;
     z-index: 2; 
+    height: var(--footer-height); /* Altura fija para el footer */
+    flex-shrink: 0; /* Evita que se encoja */
 }
 
 .social-icons {
@@ -219,8 +218,6 @@ body {
 }
 
 /* --- ESTILOS DEL MENÚ LATERAL Y OVERLAY --- */
-
-/* Overlay */
 .menu-overlay {
     position: fixed;
     top: 0;
@@ -234,7 +231,6 @@ body {
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-/* Menú lateral */
 .side-menu {
     position: fixed;
     top: 0;
@@ -251,7 +247,6 @@ body {
     opacity: 0;
 }
 
-/* Botón de cerrar (la X) */
 .side-menu .closebtn {
     position: absolute;
     top: 0;
@@ -266,7 +261,6 @@ body {
     color: var(--menu-item-hover-color);
 }
 
-/* Elementos del menú (los enlaces) */
 .side-menu .menu-items a {
     padding: 8px 8px 8px 32px;
     text-decoration: none !important;
@@ -280,14 +274,12 @@ body {
     background-color: #333;
 }
 
-/* Estado "abierto" del menú */
 .side-menu.open {
     left: 0;
     visibility: visible;
     opacity: 1;
 }
 
-/* Estado "abierto" del overlay */
 .menu-overlay.open {
     opacity: 1;
     visibility: visible;
@@ -295,14 +287,14 @@ body {
 
 /* --- ESTILOS PARA EL PANEL DE SELECCIÓN DEL TIMER (¡SECCIÓN CLAVE AJUSTADA!) --- */
 .selection-panel {
-    /* CAMBIO CLAVE: position de fixed a absolute */
+    /* Posiciona el panel ABOSLUTE a #app-wrapper */
     position: absolute; 
-    top: 0; 
+    top: var(--header-height); /* Inicia después del header */
     left: 0; 
-    /* CAMBIO CLAVE: width y height a 100% */
     width: 100%; 
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.9); 
+    /* Calcula la altura restando las alturas del header y footer */
+    height: calc(100% - var(--header-height) - var(--footer-height)); 
+    background-color: rgba(0, 0, 0, 0.95); /* Mayor opacidad para cubrir bien el contenido */
     color: var(--text-color);
     z-index: 105; 
     display: flex; 
@@ -456,7 +448,7 @@ body {
     }
 
     .selection-panel {
-        /* Ya no necesitan 100vw/vh porque son 100% del padre */
+        /* Se mantiene el cálculo de altura */
         border-radius: 0;
         padding: 10px;
     }
