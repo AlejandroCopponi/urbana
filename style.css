@@ -94,7 +94,7 @@ body {
 
 /* --- SECCIÓN PRINCIPAL: Contiene el Logo, Reproductor y Programación --- */
 .main-content {
-    flex-grow: 1; /* Ocupa el espacio restante */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -104,20 +104,23 @@ body {
     width: 100%;
     box-sizing: border-box;
 
-    /* ¡MODIFICADO! Eliminar propiedades de fondo, ya que la imagen está en #app-wrapper */
-    background-image: none; /* Asegúrate de que no haya imagen aquí */
-    background-color: transparent; /* ¡MODIFICADO! Hacerlo transparente para ver el fondo de #app-wrapper */
+    background-image: none;
+    background-color: transparent; 
     
     z-index: 0; 
-    position: relative; /* ¡CLAVE! para que el panel se posicione SOBRE este main-content */
+    position: relative;
 }
 
 .logo-placeholder {
     width: 90%;
-    max-width: 250px;
-    height: 30vh;
-    background-color: #444;
-    color: var(--light-grey);
+    max-width: 250px; 
+    height: 30vh;    
+    
+    /* MODIFICADO: Fondo con transparencia en GRIS CLARO */
+    /* RGB 220, 220, 220 es un gris muy claro. 0.6 es la opacidad. */
+    background-color: rgba(220, 220, 220, 0.6); 
+    
+    color: var(--light-grey); 
     font-size: 2.5em;
     font-weight: bold;
     display: flex;
@@ -128,9 +131,18 @@ body {
     margin-bottom: 30px;
 }
 
+.logo-placeholder img#main-logo {
+    width: 100%;   
+    height: 100%;  
+    object-fit: cover; /* Para que el logo rellene el espacio */
+    display: block; 
+    margin: auto; 
+}
+
 .player-controls {
     margin-bottom: 20px;
 }
+/* ... el resto de tu CSS para .main-content y abajo ... */
 
 #play-pause-btn {
     background-color: transparent; 
