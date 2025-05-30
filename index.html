@@ -54,22 +54,22 @@
                 </div>
             </footer>
         </div>
-    </div>
 
-   <div id="selection-panel" class="selection-panel">
-    <div class="panel-header">
-        <a href="javascript:void(0)" class="panel-closebtn" id="timer-panel-close-btn">&times;</a>
+        <div id="selection-panel" class="selection-panel">
+            <div class="panel-header">
+                <p>Configurar Timer de Apagado</p> <a href="javascript:void(0)" class="panel-closebtn" id="timer-panel-close-btn">&times;</a>
+            </div>
+            <div class="panel-content">
+                <label for="timer-set-time">Apagar a las:</label>
+                <input type="time" id="timer-set-time" value="23:00">
+                <p class="timer-description">La radio se apagará a la hora seleccionada.</p>
+            </div>
+            <div class="panel-buttons">
+                <button id="set-timer-by-time-btn">Establecer</button>
+                <button id="cancel-timer-btn" class="cancel-button hidden">Cancelar Timer</button>
+            </div>
+        </div>
     </div>
-    <div class="panel-buttons">
-        <button id="set-timer-by-time-btn">Establecer</button>
-        <button id="cancel-timer-btn" class="cancel-button hidden">Cancelar Timer</button>
-    </div>
-    <div class="panel-content">
-        <label for="timer-set-time">Apagar a las:</label>
-        <input type="time" id="timer-set-time" value="23:00">
-        <p class="timer-description">La radio se apagará a la hora seleccionada.</p>
-    </div>
-</div>
     
     <audio id="radio-stream" src="https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream" preload="none"></audio>
     
