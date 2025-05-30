@@ -22,48 +22,60 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval; 
     let timerTimeout; 
 
-    // --- REPRODUCCIÓN AUTOMÁTICA AL ABRIR LA APP (Manejo mejorado de bloqueo) ---
+    console.log("--- APP.JS INICIALIZADO ---");
+    console.log("Radio Stream Elemento:", radioStream);
+
+    // --- REPRODUCCIÓN AUTOMÁTICA AL ABRIR LA APP ---
+    // Intentar reproducir la radio automáticamente al cargar la PWA.
+    // Los navegadores modernos pueden bloquear el autoplay si no hay interacción previa del usuario.
     try {
-        radioStream.load(); 
+        console.log("Intentando reproducción automática al inicio...");
+        radioStream.load(); // Cargar el stream
+        console.log("radioStream.readyState (inicial):", radioStream.readyState);
+        console.log("radioStream.paused (inicial):", radioStream.paused);
+
         radioStream.play()
             .then(() => {
-                // Si la reproducción automática es exitosa
                 isPlaying = true;
                 playPauseBtn.innerHTML = '❚❚'; 
                 playPauseBtn.classList.remove('play-button');
                 playPauseBtn.classList.add('pause-button');
-                console.log("Reproducción automática iniciada con éxito.");
+                console.log("Reproducción automática iniciada con éxito. isPlaying:", isPlaying);
             })
             .catch(error => {
                 // Si la reproducción automática es bloqueada (lo más probable)
-                console.warn("La reproducción automática fue bloqueada por el navegador. El usuario debe hacer clic en Play.", error);
-                isPlaying = false; // Asegurar que el estado es false
-                playPauseBtn.innerHTML = '▶'; // Asegurar que el botón muestre Play
+                console.warn("Reproducción automática bloqueada/fallida al inicio:", error.name, error.message);
+                isPlaying = false;
+                playPauseBtn.innerHTML = '▶';
                 playPauseBtn.classList.remove('pause-button');
                 playPauseBtn.classList.add('play-button');
-                // Aquí podrías mostrar un mensaje sutil en la UI si lo deseas, en lugar de un alert.
-                // Por ejemplo: mainAppTimerCountdown.textContent = "Haz clic en ▶ para escuchar";
             });
     } catch (error) {
-        console.error("Error inesperado al intentar la reproducción automática:", error);
+        console.error("Error inesperado en el bloque de reproducción automática:", error);
         isPlaying = false;
         playPauseBtn.innerHTML = '▶';
         playPauseBtn.classList.remove('pause-button');
         playPauseBtn.classList.add('play-button');
     }
 
-
     // --- Lógica del Botón Play/Pausa ---
     playPauseBtn.addEventListener('click', () => {
+        console.log("Botón Play/Pause clicado. isPlaying actual:", isPlaying);
         if (isPlaying) {
-            radioStream.pause();
-            playPauseBtn.innerHTML = '▶';
-            playPauseBtn.classList.remove('pause-button');
-            playPauseBtn.classList.add('play-button');
-            isPlaying = false; // ¡IMPORTANTE! Asegurar que el estado se actualiza a false al pausar.
+            radioStream.pause(); 
+            isPlaying = false; // ¡CRÍTICO! Actualizar el estado a false al pausar.
+            playPauseBtn.innerHTML = '▶'; 
+            playPauseBtn.classList.remove('pause-button'); 
+            playPauseBtn.classList.add('play-button'); 
+            console.log("Radio PAUSADA. isPlaying:", isPlaying);
+            console.log("radioStream.paused:", radioStream.paused); 
+            console.log("radioStream.readyState:", radioStream.readyState);
         } else {
-            console.log("Intentando reproducir el stream..."); 
+            console.log("Intentando REPRODUCIR stream..."); 
             radioStream.load(); // Vuelve a cargar el stream ANTES de intentar reproducir
+            console.log("Después de radioStream.load() al hacer clic.");
+            console.log("radioStream.readyState (antes de play):", radioStream.readyState);
+            console.log("radioStream.paused (antes de play):", radioStream.paused);
 
             radioStream.play()
                 .then(() => {
@@ -71,11 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     playPauseBtn.innerHTML = '❚❚';
                     playPauseBtn.classList.remove('play-button');
                     playPauseBtn.classList.add('pause-button');
-                    console.log("Reproducción iniciada con éxito.");
+                    console.log("Reproducción iniciada con éxito por clic. isPlaying:", isPlaying);
+                    console.log("radioStream.readyState (después de play):", radioStream.readyState);
                 })
                 .catch(error => {
-                    console.error("Error al intentar reproducir la radio tras interacción:", error);
-                    alert("No se pudo iniciar la reproducción. Razones comunes: el navegador bloquea el auto-play (haz clic en la página primero), o la URL del stream es incorrecta/inaccesible (CORS). Revisa la Consola (F12) para más detalles.");
+                    console.error("Error al intentar reproducir la radio tras interacción:", error.name, error.message);
+                    alert("No se pudo iniciar la reproducción. Revisa la Consola (F12) para más detalles.");
                     isPlaying = false; 
                     playPauseBtn.innerHTML = '▶'; 
                     playPauseBtn.classList.remove('pause-button');
@@ -84,17 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Resto de los Eventos de depuración del elemento de audio (sin cambios) ---
+    // --- Eventos de depuración del elemento de audio ---
     radioStream.addEventListener('error', (e) => {
-        console.error("Error en el elemento de audio:", e);
+        console.error("EVENTO DE ERROR DE AUDIO:", e);
+        console.error("e.target.error.code:", e.target.error.code);
+        console.error("e.target.error.message:", e.target.error.message);
         let errorMessage = 'Un error desconocido ocurrió.';
         switch (e.target.error.code) {
-            case e.target.error.MEDIA_ERR_ABORTED: errorMessage = 'La carga del audio fue abortada.'; break;
-            case e.target.error.MEDIA_ERR_NETWORK: errorMessage = 'Error de red al cargar el audio.'; break;
-            case e.target.error.MEDIA_ERR_DECODE: errorMessage = 'Error de decodificación de audio. Formato no soportado o corrupto.'; break;
-            case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED: errorMessage = 'El formato del audio no es soportado o la URL es inaccesible/inválida (CORS).'; break;
+            case 1: errorMessage = 'MEDIA_ERR_ABORTED: La carga del audio fue abortada.'; break;
+            case 2: errorMessage = 'MEDIA_ERR_NETWORK: Error de red al cargar el audio.'; break;
+            case 3: errorMessage = 'MEDIA_ERR_DECODE: Error de decodificación de audio. Formato no soportado o corrupto.'; break;
+            case 4: errorMessage = 'MEDIA_ERR_SRC_NOT_SUPPORTED: El formato del audio no es soportado o la URL es inaccesible/inválida (CORS).'; break;
         }
-        console.error(errorMessage);
+        console.error("Mensaje de error detallado:", errorMessage);
         alert("Hubo un error con el stream de radio: " + errorMessage + " Consulta la Consola (F12) para más detalles.");
         isPlaying = false;
         playPauseBtn.innerHTML = '▶';
@@ -102,11 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
         playPauseBtn.classList.add('play-button');
     });
 
-    radioStream.addEventListener('stalled', () => { console.warn('La descarga del stream se ha detenido inesperadamente.'); });
-    radioStream.addEventListener('waiting', () => { console.log('Esperando que los datos del stream estén disponibles...'); });
-    radioStream.addEventListener('playing', () => { console.log('El stream está reproduciéndose.'); });
+    radioStream.addEventListener('stalled', () => { console.warn('La descarga del stream se ha detenido inesperadamente (stalled).'); });
+    radioStream.addEventListener('waiting', () => { console.log('Esperando que los datos del stream estén disponibles (waiting)...'); });
+    radioStream.addEventListener('playing', () => { console.log('El stream está reproduciéndose (playing).'); });
+    radioStream.addEventListener('pause', () => { console.log('El stream ha sido pausado (evento pause).'); }); // Nuevo log
+    radioStream.addEventListener('ended', () => { console.log('El stream ha terminado (evento ended).'); }); // Nuevo log
 
-    // --- Lógica del Menú Lateral (sin cambios) ---
+
+    // --- Lógica del Menú Lateral ---
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             sideMenu.classList.add('open');
@@ -116,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeMenuBtn.addEventListener('click', () => { sideMenu.classList.remove('open'); menuOverlay.classList.remove('open'); });
     menuOverlay.addEventListener('click', () => { sideMenu.classList.remove('open'); menuOverlay.classList.remove('open'); });
 
-    // --- Lógica del Timer de Apagado por Hora (sin cambios) ---
+    // --- Lógica del Timer de Apagado por Hora ---
     timerOptionInMenu.addEventListener('click', () => {
         sideMenu.classList.remove('open'); 
         menuOverlay.classList.remove('open'); 
@@ -197,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- Lógica de la Programación Actual (sin cambios) ---
+    // --- Lógica de la Programación Actual ---
     const updateProgram = () => {
         const now = new Date();
         const hour = now.getHours(); 
