@@ -70,7 +70,23 @@
                 <button id="cancel-timer-btn" class="cancel-button hidden">Cancelar Timer</button>
             </div>
         </div>
-    </div>
+
+        <div id="alarm-panel" class="selection-panel">
+            <div class="panel-header">
+                <p>Configurar Alarma</p>
+                <a href="javascript:void(0)" class="panel-closebtn" id="alarm-panel-close-btn">&times;</a>
+            </div>
+            <div class="panel-content">
+                <label for="alarm-set-time">Sonar a las:</label>
+                <input type="time" id="alarm-set-time" value="07:00">
+                <p class="alarm-description">La radio se encenderá a la hora seleccionada.</p>
+            </div>
+            <div class="panel-buttons">
+                <button id="set-alarm-btn">Establecer Alarma</button>
+                <button id="cancel-alarm-btn" class="cancel-button hidden">Cancelar Alarma</button>
+            </div>
+        </div>
+        </div>
     
     <audio id="radio-stream" src="https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream" preload="none"></audio>
     

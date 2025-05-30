@@ -11,16 +11,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Elementos del Panel del Timer
     const timerOptionInMenu = document.getElementById('menu-timer-option');
-    const selectionPanel = document.getElementById('selection-panel');
+    const selectionPanel = document.getElementById('selection-panel'); // Panel para Timer de Apagado
     const timerPanelCloseBtn = document.getElementById('timer-panel-close-btn');
     const timerSetTimeInput = document.getElementById('timer-set-time');
     const setTimerByTimeBtn = document.getElementById('set-timer-by-time-btn');
     const cancelTimerBtn = document.getElementById('cancel-timer-btn');
     const mainAppTimerCountdown = document.getElementById('main-app-timer-countdown');
 
+    // --- NUEVOS ELEMENTOS DEL PANEL DE ALARMA ---
+    const alarmOptionInMenu = document.getElementById('menu-alarm'); // Opción "Alarma" en el menú lateral
+    const alarmPanel = document.getElementById('alarm-panel'); // El nuevo panel de alarma
+    const alarmPanelCloseBtn = document.getElementById('alarm-panel-close-btn');
+    const alarmSetTimeInput = document.getElementById('alarm-set-time'); // Input para la hora de la alarma
+    const setAlarmBtn = document.getElementById('set-alarm-btn'); // Botón para establecer alarma
+    const cancelAlarmBtn = document.getElementById('cancel-alarm-btn'); // Botón para cancelar alarma
+
     let isPlaying = false; 
-    let countdownInterval; 
-    let timerTimeout; 
+    let countdownInterval; // Para el Timer de Apagado
+    let timerTimeout;      // Para el Timer de Apagado
+
+    let alarmTimeout;      // Variable para el timeout de la alarma
+    let isAlarmActive = false; // Estado para saber si hay una alarma activa
 
     console.log("--- APP.JS INICIALIZADO ---");
     console.log("Radio Stream Elemento:", radioStream);
@@ -41,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 playPauseBtn.classList.remove('play-button');
                 playPauseBtn.classList.add('pause-button');
                 console.log("Reproducción automática iniciada con éxito. isPlaying:", isPlaying);
+                if (mainAppTimerCountdown) {
+                    mainAppTimerCountdown.classList.add('hidden'); // Asegura que el contador de timer esté oculto al inicio si no hay un timer programado
+                }
             })
             .catch(error => {
                 // Si la reproducción automática es bloqueada (lo más probable)
@@ -129,18 +143,43 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.addEventListener('click', () => {
             sideMenu.classList.add('open');
             menuOverlay.classList.add('open');
+            // Asegúrate de que los paneles de alarma y timer estén cerrados al abrir el menú
+            selectionPanel.classList.remove('open'); 
+            alarmPanel.classList.remove('open');
         });
     }
-    closeMenuBtn.addEventListener('click', () => { sideMenu.classList.remove('open'); menuOverlay.classList.remove('open'); });
-    menuOverlay.addEventListener('click', () => { sideMenu.classList.remove('open'); menuOverlay.classList.remove('open'); });
+    closeMenuBtn.addEventListener('click', () => { 
+        sideMenu.classList.remove('open'); 
+        menuOverlay.classList.remove('open'); 
+    });
+    menuOverlay.addEventListener('click', () => { 
+        sideMenu.classList.remove('open'); 
+        menuOverlay.classList.remove('open'); 
+    });
+
+    // --- Lógica para abrir/cerrar Paneles (Genérico) ---
+    // Esta función nos ayudará a abrir un panel y cerrar otros si están abiertos.
+    function openPanel(panelToOpen) {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+
+        // Cerrar todos los paneles antes de abrir el deseado
+        selectionPanel.classList.remove('open');
+        alarmPanel.classList.remove('open');
+
+        panelToOpen.classList.add('open');
+    }
 
     // --- Lógica del Timer de Apagado por Hora ---
     timerOptionInMenu.addEventListener('click', () => {
-        sideMenu.classList.remove('open'); 
-        menuOverlay.classList.remove('open'); 
-        selectionPanel.classList.add('open'); 
-
-        if (!countdownInterval) { cancelTimerBtn.classList.add('hidden'); } else { cancelTimerBtn.classList.remove('hidden'); }
+        openPanel(selectionPanel); // Usa la función genérica
+        
+        // Lógica específica del Timer de Apagado
+        if (!countdownInterval) { 
+            cancelTimerBtn.classList.add('hidden'); 
+        } else { 
+            cancelTimerBtn.classList.remove('hidden'); 
+        }
         
         const now = new Date();
         const minutes = Math.round(now.getMinutes() / 5) * 5; 
@@ -149,7 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
         timerSetTimeInput.value = defaultTime;
     });
 
-    timerPanelCloseBtn.addEventListener('click', () => { selectionPanel.classList.remove('open'); });
+    timerPanelCloseBtn.addEventListener('click', () => { 
+        selectionPanel.classList.remove('open'); 
+    });
 
     setTimerByTimeBtn.addEventListener('click', () => {
         const timeValue = timerSetTimeInput.value;
@@ -192,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (remainingTime <= 0) {
                 mainAppTimerCountdown.textContent = '00:00:00';
                 clearInterval(countdownInterval);
+                // Asegurarse de que el timerTimeout ya ha apagado la radio o lo hará
             } else {
                 const totalSeconds = Math.floor(remainingTime / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
@@ -214,6 +256,100 @@ document.addEventListener('DOMContentLoaded', () => {
         selectionPanel.classList.remove('open');
     });
 
+    // --- Lógica del Panel de Alarma ---
+    alarmOptionInMenu.addEventListener('click', () => {
+        openPanel(alarmPanel); // Usa la función genérica para abrir el panel de alarma
+
+        // Lógica específica del Panel de Alarma
+        if (!isAlarmActive) { // Si no hay una alarma activa
+            cancelAlarmBtn.classList.add('hidden');
+        } else {
+            cancelAlarmBtn.classList.remove('hidden');
+        }
+
+        // Establecer hora por defecto en el input de la alarma (ej. 07:00 AM)
+        // Puedes ajustar esto a la hora actual + X minutos o una hora predefinida
+        const now = new Date();
+        const defaultAlarmHour = 7; // Por ejemplo, 7 AM
+        const defaultAlarmMinute = 0; // 00 minutos
+        const defaultAlarmTime = `${String(defaultAlarmHour).padStart(2, '0')}:${String(defaultAlarmMinute).padStart(2, '0')}`;
+        alarmSetTimeInput.value = defaultAlarmTime;
+    });
+
+    alarmPanelCloseBtn.addEventListener('click', () => {
+        alarmPanel.classList.remove('open'); // Cierra el panel de alarma
+    });
+
+    setAlarmBtn.addEventListener('click', () => {
+        const timeValue = alarmSetTimeInput.value;
+        if (!timeValue) {
+            alert('Por favor, selecciona una hora para la alarma.');
+            return;
+        }
+
+        const [hoursStr, minutesStr] = timeValue.split(':');
+        const targetHour = parseInt(hoursStr, 10);
+        const targetMinute = parseInt(minutesStr, 10);
+
+        const now = new Date();
+        let targetDate = new Date();
+        targetDate.setHours(targetHour, targetMinute, 0, 0); // Establece la hora y minutos de la alarma
+
+        // Si la hora de la alarma ya pasó hoy, programarla para mañana
+        if (targetDate.getTime() <= now.getTime()) {
+            targetDate.setDate(targetDate.getDate() + 1);
+        }
+
+        const timeDiffMs = targetDate.getTime() - now.getTime();
+        if (timeDiffMs <= 0) {
+            alert('La hora seleccionada ya pasó. Intenta de nuevo.');
+            return;
+        }
+
+        // Limpiar cualquier alarma existente
+        clearTimeout(alarmTimeout);
+
+        // Iniciar el timeout principal para la alarma
+        alarmTimeout = setTimeout(() => {
+            // Lógica para cuando suene la alarma:
+            console.log('¡Alarma sonando! Intentando reproducir la radio.');
+            if (radioStream.paused) {
+                radioStream.load(); // Cargar el stream antes de reproducir
+                radioStream.play()
+                    .then(() => {
+                        isPlaying = true;
+                        playPauseBtn.innerHTML = '❚❚';
+                        playPauseBtn.classList.remove('play-button');
+                        playPauseBtn.classList.add('pause-button');
+                        alert('¡Es hora! La radio se ha encendido.');
+                    })
+                    .catch(error => {
+                        console.error('Error al reproducir la radio con la alarma:', error);
+                        alert('¡Es hora! Pero no se pudo encender la radio. Revisa la consola.');
+                    });
+            } else {
+                alert('¡Es hora! La radio ya estaba sonando.');
+            }
+            isAlarmActive = false; // La alarma ha sonado, ya no está activa
+            cancelAlarmBtn.classList.add('hidden'); // Ocultar botón de cancelar
+        }, timeDiffMs);
+
+        isAlarmActive = true; // Marcar la alarma como activa
+        cancelAlarmBtn.classList.remove('hidden'); // Mostrar botón de cancelar
+        alert(`Alarma establecida para las ${timeValue}.`);
+        console.log(`Alarma establecida para las ${timeValue}.`);
+        alarmPanel.classList.remove('open'); // Cierra el panel de alarma después de configurar
+    });
+
+    cancelAlarmBtn.addEventListener('click', () => {
+        clearTimeout(alarmTimeout); // Detiene la alarma
+        isAlarmActive = false; // Marcar la alarma como inactiva
+        cancelAlarmBtn.classList.add('hidden'); // Ocultar el botón de cancelar
+        alert('Alarma cancelada.');
+        console.log('Alarma cancelada.');
+        alarmPanel.classList.remove('open'); // Cierra el panel
+    });
+
 
     // --- Lógica de la Programación Actual ---
     const updateProgram = () => {
@@ -221,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hour = now.getHours(); 
         let currentProgram = 'Música Continua'; 
 
+        // Puedes personalizar esta programación a tu gusto
         if (hour >= 7 && hour < 10) {
             currentProgram = 'El Despertador de la Mañana';
         } else if (hour >= 10 && hour < 13) {
@@ -231,12 +368,15 @@ document.addEventListener('DOMContentLoaded', () => {
             currentProgram = 'Conduciendo la Tarde';
         } else if (hour >= 19 && hour < 22) {
             currentProgram = 'Noches de Rock Nacional';
-        } else if (hour >= 22 || hour < 7) { 
+        } else if (hour >= 22 || hour < 7) { // De 22:00 a 06:59
             currentProgram = 'Selección Musical Nocturna';
         }
         programNameSpan.textContent = currentProgram;
     };
+
+    // Actualiza el programa al cargar la página
     updateProgram();
-    setInterval(updateProgram, 60 * 1000); 
+    // Actualiza el programa cada minuto (puedes ajustar el intervalo)
+    setInterval(updateProgram, 60 * 1000); // 60 segundos * 1000 milisegundos
 
 });

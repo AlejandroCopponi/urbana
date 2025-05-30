@@ -197,7 +197,7 @@ body {
 .app-footer {
     padding: 15px 20px;
     /* ¡Correcto! Esta línea ya tiene la transparencia */
-    background-color: rgba(0, 0, 0, 0.72); 
+    background-color: rgba(0, 0, 0, 0.55); 
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
     box-sizing: border-box;
@@ -309,7 +309,8 @@ body {
     visibility: visible;
 }
 
-/* --- ESTILOS PARA EL PANEL DE SELECCIÓN DEL TIMER (¡SECCIÓN CLAVE AJUSTADA!) --- */
+/* --- ESTILOS PARA EL PANEL DE SELECCIÓN DEL TIMER Y ALARMA --- */
+/* Ambas comparten la clase .selection-panel */
 .selection-panel {
     /* Posiciona el panel ABOSLUTE a #app-wrapper */
     position: absolute; 
@@ -392,7 +393,8 @@ body {
     width: 150px; 
 }
 
-.panel-content .timer-description {
+.panel-content .timer-description,
+.panel-content .alarm-description { /* Añadido .alarm-description */
     font-size: 1em;
     color: var(--light-grey);
 }
@@ -523,7 +525,8 @@ body {
         font-size: 1.2em;
         padding: 8px 12px;
     }
-    .panel-content .timer-description {
+    .panel-content .timer-description,
+    .panel-content .alarm-description { /* Añadido .alarm-description aquí también */
         font-size: 0.9em;
     }
 }
