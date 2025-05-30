@@ -67,13 +67,14 @@ body {
     z-index: 1; /* Asegura que el container se muestre debajo del panel */
 }
 
-/* --- CABECERA --- */
+/* --- CABECERA (MODIFICADA) --- */
 .app-header {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 15px 20px;
-    background-color: var(--dark-blue);
+    /* ESTA ES LA ÚNICA LÍNEA MODIFICADA PARA CAMBIAR EL COLOR */
+    background-color: rgba(0, 0, 0, 0.55); 
     color: var(--text-color);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -526,7 +527,7 @@ body {
         padding: 8px 12px;
     }
     .panel-content .timer-description,
-    .panel-content .alarm-description { /* Añadido .alarm-description aquí también */
+    .panel-content .alarm-description { 
         font-size: 0.9em;
     }
 }
