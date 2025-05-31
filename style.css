@@ -47,7 +47,7 @@ body {
     z-index: 1;
     position: relative; /* ¡CLAVE! Para posicionar el selection-panel correctamente */
     /* ¡MODIFICADO! La imagen de fondo ahora está en #app-wrapper */
-    background-image: url('fondo radio negro.jpg');
+    background-image: url('assets/images/fondo.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -253,7 +253,7 @@ body {
 
 /* --- COLORES DE LOS ICONOS DE REDES SOCIALES --- */
 .social-icons a[aria-label="Facebook"] img {
-    content: url('https://img.icons8.com/color/48/000000/facebook-new.png');
+    content: url('assets/icons/face.png');
     filter: none;
 }
 .social-icons a[aria-label="Instagram"] img {
