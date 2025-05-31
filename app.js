@@ -3,7 +3,9 @@
 // Registrar Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
+        // La ruta debe ser ABSOLUTA desde la raíz del dominio, incluyendo el subdirectorio
+        // y el scope debe coincidir con el subdirectorio.
+        navigator.serviceWorker.register('/urbana/service-worker.js', { scope: '/urbana/' }) // <-- ¡ASÍ DEBE ESTAR!
             .then(registration => {
                 console.log('Service Worker registrado con éxito:', registration.scope);
             })
