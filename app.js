@@ -1,3 +1,21 @@
+// app.js
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registrado con éxito:', registration.scope);
+            })
+            .catch(error => {
+                console.error('Fallo el registro del Service Worker:', error);
+            });
+    });
+}
+
+// --- Tu código JavaScript existente sigue aquí abajo ---
+// (Ej. const radioStream = document.getElementById('radio-stream'); etc.)
+
 document.addEventListener('DOMContentLoaded', () => {
     const playPauseBtn = document.getElementById('play-pause-btn');
     const radioStream = document.getElementById('radio-stream');
@@ -343,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { startHour: 10, startMinute: 0, name: 'Mañana es Tarde con Ale Copponi' },   // 10:00 - 12:59
         { startHour: 13, startMinute: 0, name: 'Las tardes en Urbana' },     // 13:00 - 18:59
         { startHour: 19, startMinute: 0, name: 'Música Seleccionada' },     // 19:00 - 21:59
-        { startHour: 22, startMinute: 0, name: 'Noches de Rock Nacional' },  // 12:00 - 06:59
+        { startHour: 22, startMinute: 0, name: 'Conexion con Aspen' },  // 12:00 - 06:59
     ];
 
     // Programación de Sábados
