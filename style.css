@@ -237,6 +237,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 30px; /* PRUEBA CON ESTE VALOR. Puedes ajustarlo a tu gusto (ej. 20px, 40px) */
 }
 
 .social-icons a {
@@ -257,11 +258,11 @@ body {
     filter: none;
 }
 .social-icons a[aria-label="Instagram"] img {
-    content: url('https://img.icons8.com/color/48/000000/instagram-new--v1.png');
+    content: url('assets/icons/ig.png');
     filter: none;
 }
 .social-icons a[aria-label="WhatsApp"] img {
-    content: url('https://img.icons8.com/color/48/000000/whatsapp--v1.png');
+    content: url('assets/icons/whatsapp.png');
     filter: none;
 }
 
@@ -552,5 +553,48 @@ body {
     .panel-content .timer-description,
     .panel-content .alarm-description { 
         font-size: 0.9em;
+    }
+}
+/* --- ESTILOS PARA EL BOTÓN "PUBLICITAR" --- */
+.publicitar-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--primary-blue);
+    color: var(--text-color);
+    /* ¡AJUSTES CLAVE AQUÍ PARA EL TAMAÑO! */
+    padding: 10px 20px; /* Reducimos el padding nuevamente */
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.95em; /* Reducimos ligeramente la fuente */
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    width: auto; /* Que se ajuste al contenido + padding */
+    min-width: 150px; /* Un poco menos de ancho mínimo */
+    max-width: 200px; /* Reducimos el ancho máximo */
+    height: auto;
+    box-sizing: border-box;
+}
+
+.publicitar-btn:hover {
+    background-color: var(--dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.publicitar-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+    .publicitar-btn {
+        font-size: 0.85em; /* Más pequeña la fuente para móviles */
+        padding: 8px 15px; /* Reducimos el padding para móviles también */
+        min-width: 130px; /* Ancho mínimo para móviles */
+        max-width: 180px; /* Ancho máximo para móviles */
     }
 }
