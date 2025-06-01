@@ -1,11 +1,9 @@
 // app.js
 
-// Registrar Service Worker
+// --- Código de registro de Service Worker ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // La ruta debe ser ABSOLUTA desde la raíz del dominio, incluyendo el subdirectorio
-        // y el scope debe coincidir con el subdirectorio.
-        navigator.serviceWorker.register('service-worker.js', { scope: '/urbana/' }) // <-- ¡ASÍ DEBE ESTAR!
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
             .then(registration => {
                 console.log('Service Worker registrado con éxito:', registration.scope);
             })
@@ -14,9 +12,156 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+// --- Fin del código de Service Worker ---
 
-// --- Tu código JavaScript existente sigue aquí abajo ---
-// (Ej. const radioStream = document.getElementById('radio-stream'); etc.)
+// --- Lógica para el overlay de instalación de PWA ---
+let deferredPrompt;
+
+// Referencias a los elementos del DOM relacionados con la instalación
+const installPromptOverlay = document.getElementById('installPromptOverlay');
+const customInstallButton = document.getElementById('customInstallButton');
+// NOTA: 'installPwaMainButton' y 'cancelInstallButton' han sido removidos del HTML y JS.
+
+// REFERENCIAS A LOS ELEMENTOS PRINCIPALES DE LA UI QUE QUIERES OCULTAR/MOSTRAR
+const appWrapper = document.getElementById('app-wrapper'); // Contenedor principal de tu app
+const sideMenu = document.getElementById('side-menu'); // Menú lateral
+const menuOverlay = document.getElementById('menu-overlay'); // Overlay del menú lateral
+const selectionPanel = document.getElementById('selection-panel'); // Panel del timer
+const alarmPanel = document.getElementById('alarm-panel'); // Panel de la alarma
+
+// Función para ocultar la UI principal y mostrar solo el overlay de instalación
+function hideMainAppUI() {
+    if (appWrapper) appWrapper.style.display = 'none';
+    if (sideMenu) sideMenu.classList.remove('open'); // Cierra el menú si está abierto
+    if (menuOverlay) menuOverlay.classList.remove('open'); // Oculta el overlay del menú
+    if (selectionPanel) selectionPanel.classList.remove('open'); // Cierra el panel del timer
+    if (alarmPanel) alarmPanel.classList.remove('open'); // Cierra el panel de la alarma
+    
+    // Opcional: pausar la radio si está sonando para enfocar en la instalación
+    const radioStream = document.getElementById('radio-stream');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    if (radioStream && !radioStream.paused) {
+        radioStream.pause();
+        if (playPauseBtn) {
+            playPauseBtn.innerHTML = '▶';
+            playPauseBtn.classList.remove('pause-button');
+            playPauseBtn.classList.add('play-button');
+        }
+    }
+    console.log('UI principal oculta.');
+}
+
+// Función para mostrar la UI principal
+function showMainAppUI() {
+    if (appWrapper) appWrapper.style.display = ''; // Restaura el display por defecto
+    console.log('UI principal restaurada.');
+}
+
+// Detecta si la PWA ya está instalada o se ejecuta en modo standalone
+function isInStandaloneMode() {
+    // Comprueba si está en modo standalone, o si es iOS y se lanzó desde la pantalla de inicio
+    return (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://'));
+}
+
+// Función para verificar el estado de instalación de la PWA y ocultar/mostrar elementos
+function checkPWAInstallState() {
+    if (isInStandaloneMode()) {
+        console.log('PWA ya instalada o en standalone. Ocultando elementos de instalación.');
+        if (installPromptOverlay) {
+            installPromptOverlay.classList.add('hidden'); // Oculta el overlay de instalación
+        }
+        showMainAppUI(); // Asegura que la UI principal esté visible
+    } else {
+        // Si NO está instalada, asegúrate de que el overlay de instalación esté oculto por defecto
+        // hasta que el beforeinstallprompt se dispare.
+        if (installPromptOverlay) {
+            installPromptOverlay.classList.add('hidden');
+        }
+    }
+}
+
+// Llama a esta función al cargar la página para verificar el estado inicial
+window.addEventListener('load', checkPWAInstallState);
+// También puedes verificarla en cada cambio del modo de visualización
+window.matchMedia('(display-mode: standalone)').addEventListener('change', checkPWAInstallState);
+
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // Evita que el navegador muestre su propio mensaje automáticamente
+    deferredPrompt = e; // Guarda el evento para poder dispararlo más tarde
+    console.log('Evento beforeinstallprompt capturado.');
+
+    // Muestra tu overlay de instalación personalizado
+    if (installPromptOverlay) {
+        installPromptOverlay.classList.remove('hidden'); // Hace visible el overlay grande
+        hideMainAppUI(); // Oculta la UI principal para enfocar en la instalación
+        console.log('Overlay de instalación visible.');
+    }
+});
+
+// Listener para el clic en tu botón de instalación personalizado (el del overlay grande)
+if (customInstallButton) {
+    customInstallButton.addEventListener('click', async () => {
+        console.log('Botón de instalación del overlay clicado. Intentando mostrar prompt nativo.');
+        
+        if (deferredPrompt) {
+            // MOVIDO ABAJO: NO ocultes el overlay grande ni muestres la UI principal aquí.
+            // Primero, lanza el prompt nativo y espera la respuesta del usuario.
+            deferredPrompt.prompt();
+
+            // Espera a que el usuario responda al mensaje (aceptar o cancelar)
+            const { outcome } = await deferredPrompt.userChoice;
+
+            console.log(`El usuario respondió al prompt de instalación (desde overlay): ${outcome}`);
+
+            // IMPORTANTE: El evento `deferredPrompt` solo se puede usar una vez.
+            // Lo limpiamos después de intentar el prompt, sin importar el resultado.
+            deferredPrompt = null; 
+
+            // Después de la respuesta del usuario al prompt nativo:
+            if (outcome === 'accepted') {
+                console.log('PWA instalada con éxito (desde overlay). Ocultando overlay y restaurando UI.');
+                // Solo ocultamos el overlay grande y mostramos la UI principal si la instalación fue aceptada.
+                if (installPromptOverlay) {
+                    installPromptOverlay.classList.add('hidden');
+                }
+                showMainAppUI();
+            } else {
+                console.log('Instalación de PWA rechazada o descartada (desde overlay). Manteniendo overlay visible.');
+                // Si el usuario rechaza/descarta el prompt nativo,
+                // el overlay grande permanece visible para que el usuario pueda cerrarlo manualmente
+                // o intentar la instalación de nuevo si recarga la página.
+                // Aquí podrías añadir un botón de "Cerrar" en el overlay si lo deseas para una mejor UX.
+            }
+        } else {
+            console.log('El evento beforeinstallprompt no está disponible o ya se usó (desde overlay). Proporcionando instrucciones manuales.');
+            // Este `else` es para cuando `deferredPrompt` es null desde el inicio del clic.
+            const isIOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+            
+            if (isIOS) {
+                alert('Para instalar "Estación Urbana 104.7" en tu iPhone o iPad:\n\n1. Toca el icono de "Compartir" (un cuadrado con una flecha hacia arriba) en la barra inferior de Safari.\n\n2. Desliza hacia abajo y selecciona "Añadir a pantalla de inicio".');
+            } else {
+                alert('Tu navegador no permite la instalación directa en este momento. Por favor, busca la opción "Añadir a pantalla de inicio" o "Instalar aplicación" en el menú de tu navegador (generalmente los 3 puntos en la esquina).');
+            }
+            // Después de la alerta, el overlay grande debe permanecer visible para que el usuario lo cierre si lo desea.
+        }
+    });
+}
+
+// Evento que se dispara cuando la PWA se instala (útil para ocultar el overlay permanentemente)
+window.addEventListener('appinstalled', () => {
+    console.log('PWA instalada directamente. Ocultando elementos de instalación.');
+    if (installPromptOverlay) {
+        installPromptOverlay.classList.add('hidden'); // Asegura que el overlay se oculte
+    }
+    showMainAppUI(); // Asegura que la UI principal se muestre
+    // Opcional: Mostrar un mensaje de bienvenida o tutorial de la PWA instalada
+});
+// --- Fin de la lógica para el overlay de instalación de PWA ---
+
+
+// --- Tu código JavaScript existente para la radio, alarmas, etc. ---
+// (Este bloque va *después* de toda la lógica del Service Worker y el overlay de instalación.)
 
 document.addEventListener('DOMContentLoaded', () => {
     const playPauseBtn = document.getElementById('play-pause-btn');
@@ -31,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Elementos del Panel del Timer
     const timerOptionInMenu = document.getElementById('menu-timer-option');
-    const selectionPanel = document.getElementById('selection-panel'); // Panel para Timer de Apagado
     const timerPanelCloseBtn = document.getElementById('timer-panel-close-btn');
     const timerSetTimeInput = document.getElementById('timer-set-time');
     const setTimerByTimeBtn = document.getElementById('set-timer-by-time-btn');
@@ -40,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- NUEVOS ELEMENTOS DEL PANEL DE ALARMA ---
     const alarmOptionInMenu = document.getElementById('menu-alarm'); // Opción "Alarma" en el menú lateral
-    const alarmPanel = document.getElementById('alarm-panel'); // El nuevo panel de alarma
     const alarmPanelCloseBtn = document.getElementById('alarm-panel-close-btn');
     const alarmSetTimeInput = document.getElementById('alarm-set-time'); // Input para la hora de la alarma
     const setAlarmBtn = document.getElementById('set-alarm-btn'); // Botón para establecer alarma
@@ -53,40 +196,46 @@ document.addEventListener('DOMContentLoaded', () => {
     let alarmTimeout;      // Variable para el timeout de la alarma
     let isAlarmActive = false; // Estado para saber si hay una alarma activa
 
-    console.log("--- APP.JS INICIALIZADO ---");
+    console.log("--- APP.JS INICIALIZADO (DOMContentLoaded) ---"); // Ajuste de log para claridad
     console.log("Radio Stream Elemento:", radioStream);
 
     // --- REPRODUCCIÓN AUTOMÁTICA AL ABRIR LA APP ---
-    try {
-        console.log("Intentando reproducción automática al inicio...");
-        radioStream.load(); // Cargar el stream
-        console.log("radioStream.readyState (inicial):", radioStream.readyState);
-        console.log("radioStream.paused (inicial):", radioStream.paused);
+    // Este bloque de auto-reproducción DEBE considerar si el overlay de instalación está visible.
+    // Solo intenta reproducir si no estamos mostrando el overlay de instalación
+    if (!installPromptOverlay || installPromptOverlay.classList.contains('hidden')) {
+        try {
+            console.log("Intentando reproducción automática al inicio...");
+            radioStream.load();
+            console.log("radioStream.readyState (inicial):", radioStream.readyState);
+            console.log("radioStream.paused (inicial):", radioStream.paused);
 
-        radioStream.play()
-            .then(() => {
-                isPlaying = true;
-                playPauseBtn.innerHTML = '❚❚'; 
-                playPauseBtn.classList.remove('play-button');
-                playPauseBtn.classList.add('pause-button');
-                console.log("Reproducción automática iniciada con éxito. isPlaying:", isPlaying);
-                if (mainAppTimerCountdown) {
-                    mainAppTimerCountdown.classList.add('hidden'); // Asegura que el contador de timer esté oculto al inicio si no hay un timer programado
-                }
-            })
-            .catch(error => {
-                console.warn("Reproducción automática bloqueada/fallida al inicio:", error.name, error.message);
-                isPlaying = false;
-                playPauseBtn.innerHTML = '▶';
-                playPauseBtn.classList.remove('pause-button');
-                playPauseBtn.classList.add('play-button');
-            });
-    } catch (error) {
-        console.error("Error inesperado en el bloque de reproducción automática:", error);
-        isPlaying = false;
-        playPauseBtn.innerHTML = '▶';
-        playPauseBtn.classList.remove('pause-button');
-        playPauseBtn.classList.add('play-button');
+            radioStream.play()
+                .then(() => {
+                    isPlaying = true;
+                    playPauseBtn.innerHTML = '❚❚'; 
+                    playPauseBtn.classList.remove('play-button');
+                    playPauseBtn.classList.add('pause-button');
+                    console.log("Reproducción automática iniciada con éxito. isPlaying:", isPlaying);
+                    if (mainAppTimerCountdown) {
+                        mainAppTimerCountdown.classList.add('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.warn("Reproducción automática bloqueada/fallida al inicio:", error.name, error.message);
+                    isPlaying = false;
+                    playPauseBtn.innerHTML = '▶';
+                    playPauseBtn.classList.remove('pause-button');
+                    playPauseBtn.classList.add('play-button');
+                });
+        } catch (error) {
+            console.error("Error inesperado en el bloque de reproducción automática:", error);
+            isPlaying = false;
+            playPauseBtn.innerHTML = '▶';
+            playPauseBtn.classList.remove('pause-button');
+            playPauseBtn.classList.add('play-button');
+        }
+    } else {
+        console.log("Reproducción automática omitida porque el overlay de instalación está visible.");
     }
 
     // --- Lógica del Botón Play/Pausa ---
@@ -359,11 +508,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Programación de Lunes a Viernes (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
     const weekdaySchedule = [
-        { startHour: 7, startMinute: 0, name: 'La Primera Mañana con Damián Copponi' }, // 07:00 - 09:59
-        { startHour: 10, startMinute: 0, name: 'Mañana es Tarde con Ale Copponi' },   // 10:00 - 12:59
-        { startHour: 13, startMinute: 0, name: 'Las tardes en Urbana' },     // 13:00 - 18:59
-        { startHour: 19, startMinute: 0, name: 'Música Seleccionada' },     // 19:00 - 21:59
-        { startHour: 22, startMinute: 0, name: 'Conexion con Aspen' },  // 12:00 - 06:59
+        { startHour: 7, startMinute: 0, name: 'La Primera Mañana con Damián Copponi' },
+        { startHour: 10, startMinute: 0, name: 'Mañana es Tarde con Ale Copponi' },
+        { startHour: 13, startHour: 0, name: 'Las tardes en Urbana' },
+        { startHour: 19, startMinute: 0, name: 'Música Seleccionada' },
+        { startHour: 22, startMinute: 0, name: 'Conexion con Aspen' },
     ];
 
     // Programación de Sábados
@@ -395,23 +544,18 @@ document.addEventListener('DOMContentLoaded', () => {
             activeSchedule = sundaySchedule;
         }
 
-        // Si no se encontró ninguna parrilla (lo cual no debería pasar con los if/else if)
         if (activeSchedule.length === 0) {
             programNameSpan.textContent = currentProgramName;
             return;
         }
 
-        // Iterar sobre la parrilla de programación activa para encontrar el programa actual
         for (let i = 0; i < activeSchedule.length; i++) {
             const program = activeSchedule[i];
             const nextProgram = activeSchedule[i + 1];
 
-            // Compara la hora actual con el inicio del programa
-            // Nota: Aquí se maneja el caso de que el último programa vaya hasta la medianoche
             if (currentHour > program.startHour || 
                (currentHour === program.startHour && currentMinute >= program.startMinute)) {
                 
-                // Si hay un siguiente programa, verifica que la hora actual sea antes del inicio del siguiente
                 if (nextProgram) {
                     if (currentHour < nextProgram.startHour || 
                        (currentHour === nextProgram.startHour && currentMinute < nextProgram.startMinute)) {
@@ -419,7 +563,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         break; 
                     }
                 } else {
-                    // Si es el último programa de la lista, dura hasta el final del día
                     currentProgramName = program.name;
                     break;
                 }

@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
-<!DOCTYPE html>
-<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estación Urbana 104.7</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="/urbana/manifest.json"> <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Urbana 104.7">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png"> </head>
-<body>
-    </body>
-</html>
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+</head>
 <body>
     <div id="menu-overlay" class="menu-overlay"></div>
 
@@ -24,7 +21,7 @@
         <div class="menu-items" id="main-menu-options">
             <a href="#" id="menu-alarm">Alarma</a>
             <a href="#" id="menu-timer-option">Timer de Apagado</a>
-        </div>
+            </div>
     </div>
 
     <div id="app-wrapper">
@@ -36,7 +33,8 @@
 
             <main class="main-content">
                 <div class="logo-placeholder">
-            <img src="assets/images/logo.png" alt="Logo de Estación Urbana 104.7" id="main-logo">                </div>
+                    <img src="assets/images/logo.png" alt="Logo de Estación Urbana 104.7" id="main-logo">
+                </div>
                 <div class="player-controls">
                     <button id="play-pause-btn" class="play-button">▶</button>
                 </div>
@@ -47,9 +45,9 @@
                 
                 <div class="publicitar-button-container">
                     <a href="https://wa.me/542995723105?text=Hola!%20Quisiera%20consultar%20sobre%20publicidad%20en%20la%20radio." 
-                       target="_blank" 
-                       rel="noopener noreferrer" 
-                       class="publicitar-btn">PUBLICITAR</a>
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="publicitar-btn">PUBLICITAR</a>
                 </div>
                 </main>
 
@@ -99,8 +97,27 @@
                 <button id="cancel-alarm-btn" class="cancel-button hidden">Cancelar Alarma</button>
             </div>
         </div>
-        </div>
+    </div>
     
+    <div id="installPromptOverlay" class="install-overlay hidden">
+        <div class="install-content">
+            <img src="assets/icons/icon-192x192.png" alt="Icono de la Radio" class="install-app-icon">
+            
+            <h2>¡Lleva Estación Urbana 104.7 siempre contigo!</h2>
+            
+            <p>Instala nuestra aplicación en tu pantalla de inicio</p>
+            
+            <ul>
+                <li>Acceso rápido con un solo toque</li>
+                <li>Puedes instalarla en tu PC, Android o iOS</li>
+                <li>Una experiencia más integrada y fluida</li>
+            </ul>
+            
+            <button id="customInstallButton" class="install-app-button">
+                INSTALAR
+            </button>
+        </div>
+    </div>
     <audio id="radio-stream" src="https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream" preload="none"></audio>
     
     <script src="app.js"></script>
