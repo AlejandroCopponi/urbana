@@ -368,12 +368,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Programación de Sábados
     const saturdaySchedule = [
-        { startHour: 0, startMinute: 0, name: 'Findes en Urbana - Aspen Classic' },
+        { startHour: 0, startMinute: 0, name: 'Finde en Urbana - Aspen Classic' },
     ];
 
     // Programación de Domingos
     const sundaySchedule = [
-            { startHour: 0, startMinute: 0, name: 'Findes en Urbana - Aspen Classic' },
+            { startHour: 0, startMinute: 0, name: 'Finde en Urbana - Aspen Classic' },
     ];
 
 
