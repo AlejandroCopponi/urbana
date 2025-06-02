@@ -48,20 +48,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "/assets/screenshots/screenshot-desktop.png",
-      "sizes": "1280x800",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Vista de escritorio de la aplicación"
-    },
-    {
-      "src": "/assets/screenshots/screenshot-mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "label": "Vista móvil de la aplicación"
-    }
   ]
 }

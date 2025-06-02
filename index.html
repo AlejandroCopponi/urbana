@@ -21,7 +21,7 @@
         <div class="menu-items" id="main-menu-options">
             <a href="#" id="menu-alarm">Alarma</a>
             <a href="#" id="menu-timer-option">Timer de Apagado</a>
-            </div>
+            <a href="#" id="menu-publicity">Publicitar</a> </div>
     </div>
 
     <div id="app-wrapper">
@@ -31,25 +31,32 @@
                 </div>
             </header>
 
-            <main class="main-content">
-                <div class="logo-placeholder">
-                    <img src="assets/images/logo.png" alt="Logo de Estación Urbana 104.7" id="main-logo">
-                </div>
-                <div class="player-controls">
-                    <button id="play-pause-btn" class="play-button">▶</button>
-                </div>
-                <p id="main-app-timer-countdown" class="hidden">Tiempo restante: --:--</p>
-                <div class="current-program">
-                    <p>Al aire: <span id="program-name">Cargando...</span></p>
-                </div>
-                
-                <div class="publicitar-button-container">
-                    <a href="https://wa.me/542995723105?text=Hola!%20Quisiera%20consultar%20sobre%20publicidad%20en%20la%20radio." 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        class="publicitar-btn">PUBLICITAR</a>
-                </div>
-                </main>
+     <main class="main-content">
+    <div class="logo-placeholder">
+        <img src="assets/images/logo.png" alt="Logo de Estación Urbana 104.7" id="main-logo">
+    </div>
+    
+    <div class="player-controls">
+        <button id="play-pause-btn">▶</button> 
+        <div class="volume-controls"> 
+            <button id="volume-mute-btn" class="volume-icon-button">
+                <img id="volume-icon" src="assets/icons/volume-high.png" alt="Volume Icon"> 
+            </button>
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.01" value="1">
+            <button id="volume-up-btn" class="volume-icon-button">
+                <img id="volume-plus-icon" src="assets/icons/plus-icon.png" alt="Volume Up">
+            </button>
+        </div>
+    </div>
+    <p id="main-app-timer-countdown" class="hidden">Tiempo restante: --:--</p>
+    <div class="current-program">
+        <p>Al aire: <span id="program-name">Cargando...</span></p>
+    </div>
+    
+    <div class="publicitar-button-container">
+        <a href="#" id="main-publicity-button" class="publicitar-btn">PUBLICITAR</a>
+    </div>
+</main>
 
             <footer class="app-footer">
                 <div class="social-icons">
@@ -94,9 +101,35 @@
             </div>
             <div class="panel-buttons">
                 <button id="set-alarm-btn">Establecer Alarma</button>
-                <button id="cancel-alarm-btn" class="cancel-button hidden">Cancelar Alarma</button>
+                <button id="cancel-alarm-btn">Cancelar Alarma</button>
             </div>
         </div>
+
+        <div id="contact-panel" class="selection-panel"> <div class="panel-header">
+                <p>Contacto para Publicidad</p>
+                <a href="javascript:void(0)" class="panel-closebtn" id="contact-panel-close-btn">&times;</a>
+            </div>
+            <div class="panel-content">
+                <p>Completa el formulario y nos pondremos en contacto contigo para publicitar tu negocio en Estación Urbana 104.7.</p>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Apellido y Nombre:</label>
+                        <input type="text" id="contact-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-phone">Teléfono:</label>
+                        <input type="tel" id="contact-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Mensaje:</label>
+                        <textarea id="contact-message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" id="submit-contact-form">Enviar Mensaje</button>
+                </form>
+                <p id="contact-form-status" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
+            </div>
+        </div>
+
     </div>
     
     <div id="installPromptOverlay" class="install-overlay hidden">

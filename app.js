@@ -20,7 +20,6 @@ let deferredPrompt;
 // Referencias a los elementos del DOM relacionados con la instalación
 const installPromptOverlay = document.getElementById('installPromptOverlay');
 const customInstallButton = document.getElementById('customInstallButton');
-// NOTA: 'installPwaMainButton' y 'cancelInstallButton' han sido removidos del HTML y JS.
 
 // REFERENCIAS A LOS ELEMENTOS PRINCIPALES DE LA UI QUE QUIERES OCULTAR/MOSTRAR
 const appWrapper = document.getElementById('app-wrapper'); // Contenedor principal de tu app
@@ -28,6 +27,8 @@ const sideMenu = document.getElementById('side-menu'); // Menú lateral
 const menuOverlay = document.getElementById('menu-overlay'); // Overlay del menú lateral
 const selectionPanel = document.getElementById('selection-panel'); // Panel del timer
 const alarmPanel = document.getElementById('alarm-panel'); // Panel de la alarma
+const contactPanel = document.getElementById('contact-panel'); // Panel de Contacto para Publicidad
+
 
 // Función para ocultar la UI principal y mostrar solo el overlay de instalación
 function hideMainAppUI() {
@@ -36,7 +37,8 @@ function hideMainAppUI() {
     if (menuOverlay) menuOverlay.classList.remove('open'); // Oculta el overlay del menú
     if (selectionPanel) selectionPanel.classList.remove('open'); // Cierra el panel del timer
     if (alarmPanel) alarmPanel.classList.remove('open'); // Cierra el panel de la alarma
-    
+    if (contactPanel) contactPanel.classList.remove('open'); // Cierra el panel de contacto
+
     // Opcional: pausar la radio si está sonando para enfocar en la instalación
     const radioStream = document.getElementById('radio-stream');
     const playPauseBtn = document.getElementById('play-pause-btn');
@@ -103,47 +105,34 @@ window.addEventListener('beforeinstallprompt', (e) => {
 if (customInstallButton) {
     customInstallButton.addEventListener('click', async () => {
         console.log('Botón de instalación del overlay clicado. Intentando mostrar prompt nativo.');
-        
+
         if (deferredPrompt) {
-            // MOVIDO ABAJO: NO ocultes el overlay grande ni muestres la UI principal aquí.
-            // Primero, lanza el prompt nativo y espera la respuesta del usuario.
             deferredPrompt.prompt();
 
-            // Espera a que el usuario responda al mensaje (aceptar o cancelar)
             const { outcome } = await deferredPrompt.userChoice;
 
             console.log(`El usuario respondió al prompt de instalación (desde overlay): ${outcome}`);
 
-            // IMPORTANTE: El evento `deferredPrompt` solo se puede usar una vez.
-            // Lo limpiamos después de intentar el prompt, sin importar el resultado.
-            deferredPrompt = null; 
+            deferredPrompt = null;
 
-            // Después de la respuesta del usuario al prompt nativo:
             if (outcome === 'accepted') {
                 console.log('PWA instalada con éxito (desde overlay). Ocultando overlay y restaurando UI.');
-                // Solo ocultamos el overlay grande y mostramos la UI principal si la instalación fue aceptada.
                 if (installPromptOverlay) {
                     installPromptOverlay.classList.add('hidden');
                 }
                 showMainAppUI();
             } else {
                 console.log('Instalación de PWA rechazada o descartada (desde overlay). Manteniendo overlay visible.');
-                // Si el usuario rechaza/descarta el prompt nativo,
-                // el overlay grande permanece visible para que el usuario pueda cerrarlo manualmente
-                // o intentar la instalación de nuevo si recarga la página.
-                // Aquí podrías añadir un botón de "Cerrar" en el overlay si lo deseas para una mejor UX.
             }
         } else {
             console.log('El evento beforeinstallprompt no está disponible o ya se usó (desde overlay). Proporcionando instrucciones manuales.');
-            // Este `else` es para cuando `deferredPrompt` es null desde el inicio del clic.
             const isIOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
-            
+
             if (isIOS) {
                 alert('Para instalar "Estación Urbana 104.7" en tu iPhone o iPad:\n\n1. Toca el icono de "Compartir" (un cuadrado con una flecha hacia arriba) en la barra inferior de Safari.\n\n2. Desliza hacia abajo y selecciona "Añadir a pantalla de inicio".');
             } else {
                 alert('Tu navegador no permite la instalación directa en este momento. Por favor, busca la opción "Añadir a pantalla de inicio" o "Instalar aplicación" en el menú de tu navegador (generalmente los 3 puntos en la esquina).');
             }
-            // Después de la alerta, el overlay grande debe permanecer visible para que el usuario lo cierre si lo desea.
         }
     });
 }
@@ -155,13 +144,9 @@ window.addEventListener('appinstalled', () => {
         installPromptOverlay.classList.add('hidden'); // Asegura que el overlay se oculte
     }
     showMainAppUI(); // Asegura que la UI principal se muestre
-    // Opcional: Mostrar un mensaje de bienvenida o tutorial de la PWA instalada
 });
 // --- Fin de la lógica para el overlay de instalación de PWA ---
 
-
-// --- Tu código JavaScript existente para la radio, alarmas, etc. ---
-// (Este bloque va *después* de toda la lógica del Service Worker y el overlay de instalación.)
 
 document.addEventListener('DOMContentLoaded', () => {
     const playPauseBtn = document.getElementById('play-pause-btn');
@@ -182,37 +167,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelTimerBtn = document.getElementById('cancel-timer-btn');
     const mainAppTimerCountdown = document.getElementById('main-app-timer-countdown');
 
-    // --- NUEVOS ELEMENTOS DEL PANEL DE ALARMA ---
-    const alarmOptionInMenu = document.getElementById('menu-alarm'); // Opción "Alarma" en el menú lateral
+    // --- Elementos del Panel de Alarma ---
+    const alarmOptionInMenu = document.getElementById('menu-alarm');
     const alarmPanelCloseBtn = document.getElementById('alarm-panel-close-btn');
-    const alarmSetTimeInput = document.getElementById('alarm-set-time'); // Input para la hora de la alarma
-    const setAlarmBtn = document.getElementById('set-alarm-btn'); // Botón para establecer alarma
-    const cancelAlarmBtn = document.getElementById('cancel-alarm-btn'); // Botón para cancelar alarma
+    const alarmSetTimeInput = document.getElementById('alarm-set-time');
+    const setAlarmBtn = document.getElementById('set-alarm-btn');
+    const cancelAlarmBtn = document.getElementById('cancel-alarm-btn');
 
-    let isPlaying = false; 
-    let countdownInterval; // Para el Timer de Apagado
-    let timerTimeout;      // Para el Timer de Apagado
+    // --- Elementos de Control de Volumen ---
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeIcon = document.getElementById('volume-icon'); // Icono de parlante
+    const volumeIconBtn = document.getElementById('volume-icon-btn'); // Botón del icono de parlante
+    const volumePlusIconBtn = document.getElementById('volume-up-btn'); // Botón del signo más
 
-    let alarmTimeout;      // Variable para el timeout de la alarma
-    let isAlarmActive = false; // Estado para saber si hay una alarma activa
+    // Rutas a tus iconos de volumen
+    const volumeHighIconSrc = 'assets/icons/volume-high.svg';
+    const volumeMuteIconSrc = 'assets/icons/volume-mute.svg';
+    const plusIconSrc = 'assets/icons/plus-icon.svg'; // Ya lo tienes en el HTML, pero es bueno tener la referencia
 
-    console.log("--- APP.JS INICIALIZADO (DOMContentLoaded) ---"); // Ajuste de log para claridad
+    let isPlaying = false;
+    let countdownInterval;
+    let timerTimeout;
+
+    let alarmTimeout;
+    let isAlarmActive = false;
+    let lastVolume = 1; // Guarda el último volumen antes de mutear/desmutear
+
+    console.log("--- APP.JS INICIALIZADO (DOMContentLoaded) ---");
     console.log("Radio Stream Elemento:", radioStream);
 
+    // --- Configuración inicial del volumen ---
+    if (radioStream && volumeSlider && volumeIcon) {
+        radioStream.volume = parseFloat(volumeSlider.value); // Sincroniza con el valor inicial del slider (que es 1)
+        lastVolume = radioStream.volume; // Establece el volumen inicial como el "último volumen"
+        updateVolumeIcon(radioStream.volume); // Asegura que el icono inicial sea correcto
+        console.log("Volumen inicial de la radio establecido en:", radioStream.volume);
+    }
+
     // --- REPRODUCCIÓN AUTOMÁTICA AL ABRIR LA APP ---
-    // Este bloque de auto-reproducción DEBE considerar si el overlay de instalación está visible.
-    // Solo intenta reproducir si no estamos mostrando el overlay de instalación
     if (!installPromptOverlay || installPromptOverlay.classList.contains('hidden')) {
         try {
             console.log("Intentando reproducción automática al inicio...");
             radioStream.load();
-            console.log("radioStream.readyState (inicial):", radioStream.readyState);
-            console.log("radioStream.paused (inicial):", radioStream.paused);
-
             radioStream.play()
                 .then(() => {
                     isPlaying = true;
-                    playPauseBtn.innerHTML = '❚❚'; 
+                    playPauseBtn.innerHTML = '❚❚';
                     playPauseBtn.classList.remove('play-button');
                     playPauseBtn.classList.add('pause-button');
                     console.log("Reproducción automática iniciada con éxito. isPlaying:", isPlaying);
@@ -242,21 +242,15 @@ document.addEventListener('DOMContentLoaded', () => {
     playPauseBtn.addEventListener('click', () => {
         console.log("Botón Play/Pause clicado. isPlaying actual:", isPlaying);
         if (isPlaying) {
-            radioStream.pause(); 
-            isPlaying = false; 
-            playPauseBtn.innerHTML = '▶'; 
-            playPauseBtn.classList.remove('pause-button'); 
-            playPauseBtn.classList.add('play-button'); 
+            radioStream.pause();
+            isPlaying = false;
+            playPauseBtn.innerHTML = '▶';
+            playPauseBtn.classList.remove('pause-button');
+            playPauseBtn.classList.add('play-button');
             console.log("Radio PAUSADA. isPlaying:", isPlaying);
-            console.log("radioStream.paused:", radioStream.paused); 
-            console.log("radioStream.readyState:", radioStream.readyState);
         } else {
-            console.log("Intentando REPRODUCIR stream..."); 
-            radioStream.load(); 
-            console.log("Después de radioStream.load() al hacer clic.");
-            console.log("radioStream.readyState (antes de play):", radioStream.readyState);
-            console.log("radioStream.paused (antes de play):", radioStream.paused);
-
+            console.log("Intentando REPRODUCIR stream...");
+            radioStream.load();
             radioStream.play()
                 .then(() => {
                     isPlaying = true;
@@ -264,24 +258,85 @@ document.addEventListener('DOMContentLoaded', () => {
                     playPauseBtn.classList.remove('play-button');
                     playPauseBtn.classList.add('pause-button');
                     console.log("Reproducción iniciada con éxito por clic. isPlaying:", isPlaying);
-                    console.log("radioStream.readyState (después de play):", radioStream.readyState);
                 })
                 .catch(error => {
                     console.error("Error al intentar reproducir la radio tras interacción:", error.name, error.message);
                     alert("No se pudo iniciar la reproducción. Revisa la Consola (F12) para más detalles.");
-                    isPlaying = false; 
-                    playPauseBtn.innerHTML = '▶'; 
+                    isPlaying = false;
+                    playPauseBtn.innerHTML = '▶';
                     playPauseBtn.classList.remove('pause-button');
                     playPauseBtn.classList.add('play-button');
                 });
         }
     });
 
+    // --- Lógica de los controles de volumen ---
+    function updateVolumeIcon(currentVolume) {
+        if (volumeIcon) {
+            if (currentVolume === 0) {
+                volumeIcon.src = volumeMuteIconSrc;
+                volumeIcon.alt = "Volumen Muteado";
+            } else {
+                volumeIcon.src = volumeHighIconSrc;
+                volumeIcon.alt = "Volumen Alto";
+            }
+        }
+    }
+
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', () => {
+            const newVolume = parseFloat(volumeSlider.value);
+            if (radioStream) {
+                radioStream.volume = newVolume;
+                console.log("Volumen ajustado con slider a:", newVolume);
+                updateVolumeIcon(newVolume);
+                if (newVolume > 0) {
+                    lastVolume = newVolume; // Guarda el último volumen no muteado
+                }
+            }
+        });
+    }
+
+    if (volumeIconBtn) {
+        volumeIconBtn.addEventListener('click', () => {
+            if (!radioStream) return;
+
+            if (radioStream.volume > 0) {
+                // Mutea
+                lastVolume = radioStream.volume; // Guarda el volumen actual antes de mutear
+                radioStream.volume = 0;
+                volumeSlider.value = 0;
+                updateVolumeIcon(0);
+                console.log("Volumen muteado. Último volumen:", lastVolume);
+            } else {
+                // Desmutea al último volumen conocido, o a 0.5 si nunca se ajustó y es 0
+                const targetVolume = lastVolume > 0 ? lastVolume : 0.5;
+                radioStream.volume = targetVolume;
+                volumeSlider.value = targetVolume;
+                updateVolumeIcon(targetVolume);
+                console.log("Volumen desmuteado a:", targetVolume);
+            }
+        });
+    }
+
+    if (volumePlusIconBtn) {
+        volumePlusIconBtn.addEventListener('click', () => {
+            if (!radioStream) return;
+
+            let currentVolume = radioStream.volume;
+            // Aumenta el volumen en 0.1, con un máximo de 1
+            let newVolume = Math.min(1, currentVolume + 0.1);
+            radioStream.volume = newVolume;
+            volumeSlider.value = newVolume;
+            updateVolumeIcon(newVolume);
+            lastVolume = newVolume; // Siempre guarda el último volumen para desmutear
+            console.log("Volumen incrementado a:", newVolume);
+        });
+    }
+
     // --- Eventos de depuración del elemento de audio ---
     radioStream.addEventListener('error', (e) => {
         console.error("EVENTO DE ERROR DE AUDIO:", e);
-        console.error("e.target.error.code:", e.target.error.code);
-        console.error("e.target.error.message:", e.target.error.message);
         let errorMessage = 'Un error desconocido ocurrió.';
         switch (e.target.error.code) {
             case 1: errorMessage = 'MEDIA_ERR_ABORTED: La carga del audio fue abortada.'; break;
@@ -300,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     radioStream.addEventListener('stalled', () => { console.warn('La descarga del stream se ha detenido inesperadamente (stalled).'); });
     radioStream.addEventListener('waiting', () => { console.log('Esperando que los datos del stream estén disponibles (waiting)...'); });
     radioStream.addEventListener('playing', () => { console.log('El stream está reproduciéndose (playing).'); });
-    radioStream.addEventListener('pause', () => { console.log('El stream ha sido pausado (evento pause).'); }); 
+    radioStream.addEventListener('pause', () => { console.log('El stream ha sido pausado (evento pause).'); });
     radioStream.addEventListener('ended', () => { console.log('El stream ha terminado (evento ended).'); });
 
 
@@ -309,17 +364,19 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.addEventListener('click', () => {
             sideMenu.classList.add('open');
             menuOverlay.classList.add('open');
-            selectionPanel.classList.remove('open'); 
+            // Cierra todos los paneles al abrir el menú principal
+            selectionPanel.classList.remove('open');
             alarmPanel.classList.remove('open');
+            contactPanel.classList.remove('open');
         });
     }
-    closeMenuBtn.addEventListener('click', () => { 
-        sideMenu.classList.remove('open'); 
-        menuOverlay.classList.remove('open'); 
+    closeMenuBtn.addEventListener('click', () => {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
     });
-    menuOverlay.addEventListener('click', () => { 
-        sideMenu.classList.remove('open'); 
-        menuOverlay.classList.remove('open'); 
+    menuOverlay.addEventListener('click', () => {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
     });
 
     // --- Lógica para abrir/cerrar Paneles (Genérico) ---
@@ -327,31 +384,33 @@ document.addEventListener('DOMContentLoaded', () => {
         sideMenu.classList.remove('open');
         menuOverlay.classList.remove('open');
 
+        // Cierra todos los paneles antes de abrir el deseado
         selectionPanel.classList.remove('open');
         alarmPanel.classList.remove('open');
+        contactPanel.classList.remove('open');
 
         panelToOpen.classList.add('open');
     }
 
     // --- Lógica del Timer de Apagado por Hora ---
     timerOptionInMenu.addEventListener('click', () => {
-        openPanel(selectionPanel); 
-        
-        if (!countdownInterval) { 
-            cancelTimerBtn.classList.add('hidden'); 
-        } else { 
-            cancelTimerBtn.classList.remove('hidden'); 
+        openPanel(selectionPanel);
+
+        if (!countdownInterval) {
+            cancelTimerBtn.classList.add('hidden');
+        } else {
+            cancelTimerBtn.classList.remove('hidden');
         }
-        
+
         const now = new Date();
-        const minutes = Math.round(now.getMinutes() / 5) * 5; 
-        now.setMinutes(minutes, 0, 0); 
+        const minutes = Math.round(now.getMinutes() / 5) * 5;
+        now.setMinutes(minutes, 0, 0);
         const defaultTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         timerSetTimeInput.value = defaultTime;
     });
 
-    timerPanelCloseBtn.addEventListener('click', () => { 
-        selectionPanel.classList.remove('open'); 
+    timerPanelCloseBtn.addEventListener('click', () => {
+        selectionPanel.classList.remove('open');
     });
 
     setTimerByTimeBtn.addEventListener('click', () => {
@@ -419,23 +478,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica del Panel de Alarma ---
     alarmOptionInMenu.addEventListener('click', () => {
-        openPanel(alarmPanel); 
+        openPanel(alarmPanel);
 
-        if (!isAlarmActive) { 
+        if (!isAlarmActive) {
             cancelAlarmBtn.classList.add('hidden');
         } else {
             cancelAlarmBtn.classList.remove('hidden');
         }
 
         const now = new Date();
-        const defaultAlarmHour = 7; 
-        const defaultAlarmMinute = 0; 
+        const defaultAlarmHour = 7;
+        const defaultAlarmMinute = 0;
         const defaultAlarmTime = `${String(defaultAlarmHour).padStart(2, '0')}:${String(defaultAlarmMinute).padStart(2, '0')}`;
         alarmSetTimeInput.value = defaultAlarmTime;
     });
 
     alarmPanelCloseBtn.addEventListener('click', () => {
-        alarmPanel.classList.remove('open'); 
+        alarmPanel.classList.remove('open');
     });
 
     setAlarmBtn.addEventListener('click', () => {
@@ -451,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const now = new Date();
         let targetDate = new Date();
-        targetDate.setHours(targetHour, targetMinute, 0, 0); 
+        targetDate.setHours(targetHour, targetMinute, 0, 0);
 
         if (targetDate.getTime() <= now.getTime()) {
             targetDate.setDate(targetDate.getDate() + 1);
@@ -468,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alarmTimeout = setTimeout(() => {
             console.log('¡Alarma sonando! Intentando reproducir la radio.');
             if (radioStream.paused) {
-                radioStream.load(); 
+                radioStream.load();
                 radioStream.play()
                     .then(() => {
                         isPlaying = true;
@@ -484,45 +543,118 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alert('¡Es hora! La radio ya estaba sonando.');
             }
-            isAlarmActive = false; 
-            cancelAlarmBtn.classList.add('hidden'); 
+            isAlarmActive = false;
+            cancelAlarmBtn.classList.add('hidden');
         }, timeDiffMs);
 
-        isAlarmActive = true; 
-        cancelAlarmBtn.classList.remove('hidden'); 
+        isAlarmActive = true;
+        cancelAlarmBtn.classList.remove('hidden');
         alert(`Alarma establecida para las ${timeValue}.`);
         console.log(`Alarma establecida para las ${timeValue}.`);
-        alarmPanel.classList.remove('open'); 
+        alarmPanel.classList.remove('open');
     });
 
     cancelAlarmBtn.addEventListener('click', () => {
-        clearTimeout(alarmTimeout); 
-        isAlarmActive = false; 
-        cancelAlarmBtn.classList.add('hidden'); 
+        clearTimeout(alarmTimeout);
+        isAlarmActive = false;
+        cancelAlarmBtn.classList.add('hidden');
         alert('Alarma cancelada.');
         console.log('Alarma cancelada.');
-        alarmPanel.classList.remove('open'); 
+        alarmPanel.classList.remove('open');
     });
 
-    // --- Lógica de la Programación Actual (MODIFICADA para días de la semana) ---
+    // --- Lógica del Panel de Contacto para Publicidad (NUEVO) ---
+    const menuPublicityOption = document.getElementById('menu-publicity');
+    const mainPublicityButton = document.getElementById('main-publicity-button');
+    const contactPanelCloseBtn = document.getElementById('contact-panel-close-btn');
+    const contactForm = document.getElementById('contact-form');
+    const contactFormStatus = document.getElementById('contact-form-status');
+    const contactNameInput = document.getElementById('contact-name');
+    const contactPhoneInput = document.getElementById('contact-phone');
+    const contactMessageInput = document.getElementById('contact-message');
 
-    // Programación de Lunes a Viernes (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
+    if (menuPublicityOption) {
+        menuPublicityOption.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPanel(contactPanel);
+            contactFormStatus.textContent = '';
+            contactForm.reset();
+            contactFormStatus.style.color = '';
+        });
+    }
+
+    if (mainPublicityButton) {
+        mainPublicityButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPanel(contactPanel);
+            contactFormStatus.textContent = '';
+            contactForm.reset();
+            contactFormStatus.style.color = '';
+        });
+    }
+
+    if (contactPanelCloseBtn) {
+        contactPanelCloseBtn.addEventListener('click', () => {
+            if (contactPanel) contactPanel.classList.remove('open');
+        });
+    }
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const name = contactNameInput.value.trim();
+            const phone = contactPhoneInput.value.trim();
+            const message = contactMessageInput.value.trim();
+
+            if (!name || !phone || !message) {
+                contactFormStatus.style.color = 'var(--form-status-error)';
+                contactFormStatus.textContent = 'Por favor, completa todos los campos.';
+                return;
+            }
+
+            contactFormStatus.style.color = 'var(--light-grey)';
+            contactFormStatus.textContent = 'Abriendo tu cliente de correo...';
+
+            const recipient = 'copponialejandro@gmail.com';
+            const subject = encodeURIComponent(`Consulta de Publicidad: ${name}`);
+            const body = encodeURIComponent(
+                `Nombre: ${name}\n` +
+                `Teléfono: ${phone}\n\n` +
+                `Mensaje:\n${message}\n\n` +
+                `--\nEnviado desde la PWA Estación Urbana`
+            );
+
+            const mailtoLink = `mailto:${recipient}?subject=${subject}&body=${body}`;
+
+            window.location.href = mailtoLink;
+
+            setTimeout(() => {
+                contactFormStatus.style.color = 'var(--form-status-success)';
+                contactFormStatus.textContent = 'Por favor, envía el correo desde tu cliente de mail.';
+                contactForm.reset();
+            }, 1000);
+
+            const submitButton = document.getElementById('submit-contact-form');
+            if (submitButton) submitButton.disabled = false;
+        });
+    }
+
+    // --- Lógica de la Programación Actual (MODIFICADA para días de la semana) ---
     const weekdaySchedule = [
         { startHour: 7, startMinute: 0, name: 'La Primera Mañana con Damián Copponi' },
         { startHour: 10, startMinute: 0, name: 'Mañana es Tarde con Ale Copponi' },
-        { startHour: 13, startHour: 0, name: 'Las tardes en Urbana' },
+        { startHour: 13, startMinute: 0, name: 'Tardes en Estación Urbana' },
         { startHour: 19, startMinute: 0, name: 'Música Seleccionada' },
-        { startHour: 22, startMinute: 0, name: 'Conexion con Aspen' },
+        { startHour: 22, startMinute: 0, name: 'Conexión con Aspen' },
     ];
 
-    // Programación de Sábados
     const saturdaySchedule = [
         { startHour: 0, startMinute: 0, name: 'Finde en Urbana - Aspen Classic' },
     ];
 
-    // Programación de Domingos
     const sundaySchedule = [
-            { startHour: 0, startMinute: 0, name: 'Finde en Urbana - Aspen Classic' },
+        { startHour: 0, startMinute: 0, name: 'Finde en Urbana - Aspen Classic' },
     ];
 
 
@@ -535,7 +667,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let activeSchedule = [];
         let currentProgramName = 'Programación Desconocida';
 
-        // Seleccionar la parrilla de programación correcta según el día de la semana
         if (currentDay >= 1 && currentDay <= 5) { // Lunes a Viernes
             activeSchedule = weekdaySchedule;
         } else if (currentDay === 6) { // Sábado
@@ -553,14 +684,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const program = activeSchedule[i];
             const nextProgram = activeSchedule[i + 1];
 
-            if (currentHour > program.startHour || 
-               (currentHour === program.startHour && currentMinute >= program.startMinute)) {
-                
+            if (currentHour > program.startHour ||
+                (currentHour === program.startHour && currentMinute >= program.startMinute)) {
+
                 if (nextProgram) {
-                    if (currentHour < nextProgram.startHour || 
-                       (currentHour === nextProgram.startHour && currentMinute < nextProgram.startMinute)) {
+                    if (currentHour < nextProgram.startHour ||
+                        (currentHour === nextProgram.startHour && currentMinute < nextProgram.startMinute)) {
                         currentProgramName = program.name;
-                        break; 
+                        break;
                     }
                 } else {
                     currentProgramName = program.name;
@@ -568,13 +699,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
+
         programNameSpan.textContent = currentProgramName;
     };
 
     // Actualiza el programa al cargar la página
     updateProgram();
     // Actualiza el programa cada minuto
-    setInterval(updateProgram, 60 * 1000); 
+    setInterval(updateProgram, 60 * 1000);
 
 });
