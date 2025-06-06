@@ -3,13 +3,14 @@
     --primary-blue: #007bff;
     --dark-blue: #0056b3;
     --background-black: #1a1a1a;
-    --app-background-color: #333333; /* No se usa directamente para el fondo de app-wrapper, pero útil si se necesita */
+    --app-background-color: #333333;
     --text-color: #ffffff;
     --light-grey: #cccccc;
     --menu-bg-color: #111;
     --menu-item-color: #818181;
     --menu-item-hover-color: #f1f1f1;
-    --panel-bg-color: #2a2a2a; /* Fondo para los paneles internos (inputs, etc.) */
+    --panel-bg-color: #2a2a2a;
+    /* Fondo para los paneles internos (inputs, etc.) */
 
     /* Nuevas variables para alturas de header y footer */
     --header-height: 60px;
@@ -21,8 +22,10 @@
     --form-input-text: #f0f0f0;
     --form-button-bg: #28a745; /* Verde para enviar */
     --form-button-hover: #218838;
-    --form-status-error: #dc3545; /* Rojo para mensajes de error */
-    --form-status-success: #28a745; /* Verde para mensajes de éxito */
+    --form-status-error: #dc3545;
+    /* Rojo para mensajes de error */
+    --form-status-success: #28a745;
+    /* Verde para mensajes de éxito */
 }
 
 /* --- ESTILOS GENERALES Y LAYOUT DEL CONTENEDOR --- */
@@ -33,39 +36,50 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden; /* CLAVE: Oculta cualquier scroll en la ventana del navegador */
-    box-sizing: border-box; /* Asegura que padding/border se incluyan en el ancho/alto */
+    box-sizing: border-box;
+    /* Asegura que padding/border se incluyan en el ancho/alto */
 }
 
 body {
     font-family: Arial, sans-serif;
     color: var(--text-color);
     background-color: transparent; /* Fondo del body transparente */
-    display: flex; /* Para centrar el viewport-manager */
+    display: flex;
+    /* Para centrar el viewport-manager */
     justify-content: center;
     align-items: center;
 }
 
 /* NUEVO ELEMENTO: Contenedor para gestionar el viewport */
 #viewport-manager {
-    position: relative; /* CLAVE: Para que los hijos con position: absolute se posicionen respecto a este */
+    position: relative;
+    /* CLAVE: Para que los hijos con position: absolute se posicionen respecto a este */
     width: 100vw;
     height: 100vh; /* Ocupa el 100% del viewport */
-    display: flex; /* Para centrar el app-wrapper */
+    display: flex;
+    /* Para centrar el app-wrapper */
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Esto asegura que nada dentro de viewport-manager se desborde */
+    overflow: hidden;
+    /* Esto asegura que nada dentro de viewport-manager se desborde */
 }
 
 #app-wrapper {
     /* Ahora #app-wrapper se posiciona y dimensiona DENTRO del viewport-manager */
-    width: 100%; /* Ocupa el 100% del ancho del viewport-manager */
-    height: 100%; /* Ocupa el 100% del alto del viewport-manager */
+    width: 100%;
+    /* Ocupa el 100% del ancho del viewport-manager */
+    height: 100%;
+    /* Ocupa el 100% del alto del viewport-manager */
     max-width: 400px;
-    max-height: 800px; /* Aquí es donde limitamos el tamaño de la app en desktop */
+    max-height: 800px;
+    /* Aquí es donde limitamos el tamaño de la app en desktop */
 
-    overflow: hidden; /* Controla el desbordamiento de su propio contenido */
-    z-index: 1; /* Asegura que esté por encima del fondo si hay otros elementos */
-    position: relative; /* Mantenemos relative por si hay elementos absolutos dentro de él */
+    overflow: hidden;
+    /* Controla el desbordamiento de su propio contenido */
+    z-index: 1;
+    /* Asegura que esté por encima del fondo si hay otros elementos */
+    position: relative;
+    /* Mantenemos relative por si hay elementos absolutos dentro de él */
     background-image: url('assets/images/fondo.jpg');
     background-size: cover;
     background-position: center;
@@ -82,7 +96,8 @@ body {
     flex-direction: column;
     background-color: transparent;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    overflow: hidden; /* Oculta el scroll vertical para todo el contenido principal del container */
+    overflow: hidden;
+    /* Oculta el scroll vertical para todo el contenido principal del container */
     position: relative;
     z-index: 1;
 }
@@ -97,8 +112,10 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
     box-sizing: border-box;
-    z-index: 2; /* Asegura que el header esté por encima del main-content */
-    flex-shrink: 0; /* Evita que el header se encoja */
+    z-index: 2;
+    /* Asegura que el header esté por encima del main-content */
+    flex-shrink: 0;
+    /* Evita que el header se encoja */
 }
 
 .menu-icon {
@@ -114,10 +131,12 @@ body {
     /* La altura del main-content ahora se calcula con calc() para mayor precisión,
        como habíamos hablado para el sticky footer. */
     height: calc(100% - var(--header-height) - var(--footer-height));
-    flex-grow: 1; /* Esto sigue siendo útil en combinación con calc() para asegurar distribución si los valores cambian */
+    flex-grow: 1;
+    /* Esto sigue siendo útil en combinación con calc() para asegurar distribución si los valores cambian */
     display: flex;
     flex-direction: column; /* Apila los elementos dentro de main-content (logo, player-controls, etc.) */
-    justify-content: flex-start; /* Contenido inicia desde arriba */
+    justify-content: flex-start;
+    /* Contenido inicia desde arriba */
     align-items: center;
     padding: 15px;
     text-align: center;
@@ -128,26 +147,30 @@ body {
     z-index: 0;
     position: relative;
     overflow-y: auto; /* Aquí sí: el contenido principal del main-content debe scrollear si es muy largo */
-    overflow-x: hidden; /* Oculta el scroll horizontal explícitamente en main-content */
+    overflow-x: hidden;
+    /* Oculta el scroll horizontal explícitamente en main-content */
     -webkit-overflow-scrolling: touch;
 }
 
 .logo-placeholder {
     width: 90%;
-    max-width: 250px;
-    height: 25vh;
-    display: flex; /* Asegura que la imagen se centre */
+    max-width: 250px; /* REVERTIDO: A su valor original de 250px para PC */
+    height: 25vh; /* REVERTIDO: A su valor original de 25vh para PC */
+    display: flex;
+    /* Asegura que la imagen se centre */
     justify-content: center;
     align-items: center;
     text-align: center;
     border-radius: 5px;
     margin-bottom: 25px;
+    background-color: rgba(192, 192, 192, 0.4); /* Mantenido aquí para que siempre esté visible */
 }
 
 .logo-placeholder img#main-logo {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Cambiado a 'contain' para que el logo no se corte */
+    object-fit: contain;
+    /* Cambiado a 'contain' para que el logo no se corte */
     display: block;
     margin: auto;
 }
@@ -236,9 +259,15 @@ body {
 
 .social-icons {
     display: flex;
-    justify-content: center;
+    /* Cambia de 'center' a una de las siguientes opciones: */
+    justify-content: space-around;
+    /* Prueba con esta primero */
+    /* o si prefieres que los extremos toquen los bordes, usa: */
+    /* justify-content: space-between; */
     align-items: center;
-    gap: 25px;
+    gap: 25px; /* Puedes ajustar este valor si necesitas más o menos espacio entre iconos */
+    width: 100%;
+    /* Asegúrate de que ocupe todo el ancho disponible */
 }
 
 .social-icons a {
@@ -283,7 +312,8 @@ body {
 .side-menu {
     position: fixed;
     top: 0;
-    left: -250px; /* Oculto fuera de la pantalla inicialmente */
+    left: -250px;
+    /* Oculto fuera de la pantalla inicialmente */
     height: 100%;
     width: 250px;
     background-color: var(--menu-bg-color);
@@ -297,14 +327,16 @@ body {
 
     /* REQUERIDO: Estilos para el contenido del menú */
     display: flex;
-    flex-direction: column; /* Apila el botón de cierre y la lista de navegación */
+    flex-direction: column;
+    /* Apila el botón de cierre y la lista de navegación */
 }
 
 /* Botón de cierre del menú (ajustado al nuevo HTML) */
 .side-menu .close-menu-btn {
     position: absolute;
     top: 10px; /* Ajusta según el diseño de tu header/menú */
-    right: 15px; /* Espacio a la derecha */
+    right: 15px;
+    /* Espacio a la derecha */
     font-size: 36px;
     color: var(--menu-item-color);
     text-decoration: none;
@@ -314,7 +346,8 @@ body {
     line-height: 1; /* Para centrar el caracter 'x' */
     padding: 5px;
     transition: 0.3s;
-    outline: none; /* Evita el borde de enfoque */
+    outline: none;
+    /* Evita el borde de enfoque */
 }
 .side-menu .close-menu-btn:hover {
     color: var(--menu-item-hover-color);
@@ -322,21 +355,27 @@ body {
 
 /* Contenedor de la lista de elementos del menú */
 .side-menu .menu-nav {
-    flex-grow: 1; /* Permite que el nav ocupe el espacio restante */
-    overflow-y: auto; /* Si hay muchas opciones, que scrollee el nav */
-    padding-top: 10px; /* Espacio entre el botón de cierre y el primer item */
+    flex-grow: 1;
+    /* Permite que el nav ocupe el espacio restante */
+    overflow-y: auto;
+    /* Si hay muchas opciones, que scrollee el nav */
+    padding-top: 10px;
+    /* Espacio entre el botón de cierre y el primer item */
 }
 
 .side-menu .menu-nav ul {
-    list-style: none; /* Quita los puntos de la lista */
+    list-style: none;
+    /* Quita los puntos de la lista */
     padding: 0;
     margin: 0;
 }
 
 .side-menu .menu-nav ul li a { /* Apunta a los enlaces dentro de la lista */
-    padding: 15px 32px; /* Aumentado el padding para hacer clic más fácil */
+    padding: 15px 32px;
+    /* Aumentado el padding para hacer clic más fácil */
     text-decoration: none;
-    font-size: 20px; /* Ajustado para un tamaño más apropiado para el menú */
+    font-size: 20px;
+    /* Ajustado para un tamaño más apropiado para el menú */
     color: var(--menu-item-color);
     display: block;
     transition: 0.3s;
@@ -509,7 +548,8 @@ body {
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Espacio entre cada grupo de formulario */
+    gap: 15px;
+    /* Espacio entre cada grupo de formulario */
 }
 
 /* Estilo para cada grupo de label/input */
@@ -528,7 +568,8 @@ body {
 #contact-form input[type="text"],
 #contact-form input[type="tel"],
 #contact-form textarea {
-    width: calc(100% - 22px); /* Ancho del 100% menos padding y borde */
+    width: calc(100% - 22px);
+    /* Ancho del 100% menos padding y borde */
     padding: 10px;
     border: 1px solid var(--form-input-border);
     background-color: var(--form-input-bg);
@@ -567,7 +608,8 @@ body {
     margin-top: 15px;
     text-align: center;
     font-weight: bold;
-    display: none; /* Aseguramos que esté oculto por defecto */
+    display: none;
+    /* Aseguramos que esté oculto por defecto */
 }
 
 /* --- ESTILOS PARA EL BOTÓN "PUBLICITAR" PRINCIPAL --- */
@@ -596,55 +638,66 @@ body {
 }
 
 /* --- ESTILOS PARA EL OVERLAY DE INSTALACIÓN --- */
+/* --- ESTILOS PARA EL OVERLAY DE INSTALACIÓN (MODIFICACIÓN AGRESIVA) --- */
 .install-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    width: 100vw; /* Asegura que cubra el 100% del ancho del viewport */
+    height: 100vh;
+    /* Asegura que cubra el 100% del alto del viewport */
+    background-color: #000000 !important;
+    /* ¡Negro sólido, forzado! */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 99999 !important;
+    /* ¡Z-index extremadamente alto para ir por encima de todo! */
+    /* Aquí no hay opacity, visibility ni transition */
 }
 
 .install-overlay.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none; /* Impide clics cuando está oculto */
+    display: none !important;
+    /* Fuerza a ocultarse */
 }
 
 .install-content {
-    background-color: var(--background-black);
-    color: var(--text-color);
+    background-color: #333333 !important;
+    /* Fondo del cuadro de contenido, forzado */
+    color: #ffffff !important;
+    /* Color del texto dentro del cuadro, forzado */
     padding: 30px;
     border-radius: 15px;
     text-align: center;
     max-width: 90%;
     width: 400px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    transform: translateY(0);
-    transition: transform 0.3s ease;
 }
 
-.install-overlay.hidden .install-content {
-    transform: translateY(20px);
-}
-
-.install-content h2 {
-    font-size: 1.8em;
-    margin-bottom: 15px;
-    color: var(--primary-blue);
-}
-
-.install-content p {
+/* Nuevos estilos para los botones del overlay (añade esto al final de tu CSS) */
+.install-button, .cancel-install-button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
     font-size: 1em;
-    margin-bottom: 20px;
-    line-height: 1.5;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: background-color 0.3s ease;
+}
+
+.install-button:hover {
+    background-color: var(--dark-blue);
+}
+
+.cancel-install-button {
+    background-color: #dc3545;
+    /* Rojo para cancelar */
+}
+
+.cancel-install-button:hover {
+    background-color: #c82333;
 }
 
 /* --- RESPONSIVE: Ajustes para pantallas pequeñas (móviles) --- */
@@ -661,11 +714,19 @@ body {
         border-radius: 0;
     }
 
-    .logo-placeholder {
-        height: 18vh;
-        max-height: 130px;
-        margin-bottom: 15px;
-    }
+   .logo-placeholder {
+    width: 90%;
+    max-width: 250px;
+    height: 15vh;
+    display: flex;
+    /* Asegura que la imagen se centre */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    /* La regla background-color ya se movió fuera de aquí */
+   }
 
     .player-controls {
         margin-bottom: 10px;
