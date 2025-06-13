@@ -113,9 +113,9 @@ body {
     width: 100%;
     box-sizing: border-box;
     z-index: 2;
-    /* Asegura que el header esté por encima del main-content */
     flex-shrink: 0;
-    /* Evita que el header se encoja */
+    /* MODIFICADO: Para distribuir los elementos a los extremos */
+    justify-content: space-between;
 }
 
 .menu-icon {
@@ -154,8 +154,8 @@ body {
 
 .logo-placeholder {
     width: 90%;
-    max-width: 250px; /* REVERTIDO: A su valor original de 250px para PC */
-    height: 25vh; /* REVERTIDO: A su valor original de 25vh para PC */
+    max-width: 250px;
+    height: 25vh;
     display: flex;
     /* Asegura que la imagen se centre */
     justify-content: center;
@@ -163,7 +163,8 @@ body {
     text-align: center;
     border-radius: 5px;
     margin-bottom: 25px;
-    background-color: rgba(192, 192, 192, 0.4); /* Mantenido aquí para que siempre esté visible */
+    /* Añadido para que el fondo gris esté siempre presente */
+    background-color: rgba(192, 192, 192, 0.4);
 }
 
 .logo-placeholder img#main-logo {
@@ -242,6 +243,185 @@ body {
     color: var(--text-color);
 }
 
+/*estilos de iconos de librería*/
+/* ... (después de .player-controls o en una nueva sección para controles de reproductor) ... */
+
+.player-main-controls {
+    display: flex; /* Para que los elementos se pongan uno al lado del otro */
+    align-items: center; /* Para alinear verticalmente el botón y el volumen */
+    gap: 20px; /* Espacio entre el botón de play/pause y el control de volumen */
+    margin-bottom: 15px; /* Mantener el margen inferior si es necesario */
+    width: 100%; /* Ocupa el ancho completo del player-controls */
+    justify-content: center; /* Centra los controles principales horizontalmente */
+}
+
+/* Estilos base para los íconos de Font Awesome - SOLO QUITANDO LA SOMBRA */
+/* Aplicamos a todos los <i> dentro de botones relevantes */
+.fas { /* Este selector afectará a todos los iconos Font Awesome */
+    text-shadow: none !important; /* ELIMINA TODA SOMBRA DE TEXTO de los iconos */
+    color: var(--primary-blue); /* Aseguramos que el color sea celeste por defecto */
+}
+/* Aseguramos que los iconos dentro de botones de control no tengan text-shadow */
+.player-controls button i,
+.volume-icon i,
+.volume-plus-icon { /* También para el signo + */
+    color: var(--primary-blue);
+    text-shadow: none; /* ELIMINADA SOMBRA */
+    transition: none; /* Quitamos transición de sombra si ya no hay sombra */
+}
+
+/* Ajuste específico para el botón de Play/Pause */
+#play-pause-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    line-height: 1;
+    font-size: 4.5em; /* Tamaño del icono */
+    font-weight: bold;
+    color: var(--primary-blue); /* Mantenemos por si Font Awesome lo necesita o hay estilos por defecto */
+    text-shadow: none; /* Asegura que no haya una doble sombra aquí si la <i> ya la tiene */
+    box-shadow:
+        2px 2px 5px rgba(0, 0, 0, 0.3),
+        -2px -2px 5px rgba(255, 255, 255, 0.2);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    display: block;
+}
+
+/* Hover y Active para el botón de Play/Pause con Font Awesome */
+#play-pause-btn:hover {
+    transform: scale(1.1);
+    box-shadow:
+        3px 3px 7px rgba(0, 0, 0, 0.4),
+        -3px -3px 7px rgba(255, 255, 255, 0.3);
+    text-shadow: none; /* Asegura que no haya doble sombra */
+}
+
+#play-pause-btn:active {
+    transform: scale(0.95);
+    box-shadow:
+        1px 1px 3px rgba(0, 0, 0, 0.2),
+        -1px -1px 3px rgba(255, 255, 255, 0.1);
+    text-shadow: none; /* Asegura que no haya doble sombra */
+}
+
+/* Modificación para la clase pause-button (afecta al tamaño del icono de pausa) */
+.pause-button {
+    font-size: 4em; /* Mantener un tamaño ligeramente diferente para pausa si es necesario */
+}
+
+/* Estilos para el ícono de volumen */
+.volume-icon {
+    font-size: 2.5em; /* Tamaño del ícono del parlante, ajusta si es necesario */
+    background: none;
+    border: none;
+    color: var(--primary-blue); /* Color del ícono */
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    line-height: 1; /* Asegura que el ícono esté bien centrado */
+    /* La sombra 3D se aplica desde la regla general para <i>, pero ya la eliminamos */
+}
+
+.volume-control-container {
+    position: relative; /* Clave para posicionar el panel del slider respecto a este contenedor */
+    display: flex; /* Para alinear el botón del ícono y el panel del slider */
+    align-items: center;
+    gap: 10px; /* Espacio entre el ícono del parlante y el panel del slider */
+}
+
+
+/* Estilos para el panel flotante del slider */
+.volume-slider-panel {
+    display: flex;
+    flex-direction: column-reverse; /* Pone el slider arriba y el '+' abajo */
+    align-items: center; /* Centra los elementos horizontalmente en el contenedor de columna */
+    justify-content: center; /* Centra verticalmente si hay espacio */
+    gap: 10px; /* Espacio entre slider y '+' */
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro con transparencia */
+    padding: 8px 5px; /* Angostar el contenedor */
+    border-radius: 8px;
+    border: 1px solid var(--primary-blue);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.7); /* Sombra para profundidad */
+    position: absolute;
+    left: 100%; /* Posiciona a la derecha del icono del parlante */
+    right: auto;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px); /* Desplaza a la derecha desde el icono */
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0; /* Oculto por defecto */
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+    height: 160px; /* Altura del panel para un slider más largo */
+    width: auto; /* Ancho automático */
+}
+
+/* Clase para mostrar el panel del slider */
+.volume-slider-panel:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0); /* Vuelve a su posición final sin desplazamiento */
+}
+
+/* --- NUEVOS ESTILOS PARA EL SLIDER PERSONALIZADO (DIVS) --- */
+#custom-volume-slider {
+    position: relative;
+    width: 6px;
+    height: 120px;
+    background: linear-gradient(to top, var(--dark-blue) 0%, var(--primary-blue) 100%);
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0 auto; /* Centrar el track horizontalmente dentro de su flex container */
+}
+
+#custom-slider-thumb {
+    position: absolute;
+    width: 18px !important; /* Mantenemos el tamaño de la bolita y forzamos */
+    height: 18px !important; /* Mantenemos el tamaño de la bolita y forzamos */
+    background: var(--text-color);
+    border: 2px solid var(--primary-blue);
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    /* --- CAMBIOS CLAVE PARA CENTRAR LA BOLITA --- */
+    left: 50% !important; /* Mueve el punto de origen de la bolita al centro del track */
+    transform: translateX(-50%) !important; /* Compensa la mitad del ancho de la bolita para centrarla */
+    bottom: 0; /* Posición inicial abajo (volumen 0), forzado */
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; /* Añadimos transform a la transición */
+}
+
+#custom-slider-thumb:hover {
+    background: var(--light-grey);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+#custom-slider-thumb:active {
+    cursor: grabbing;
+    background: var(--dark-blue);
+    box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+/* Ajuste en .player-controls para su contenedor */
+.player-controls {
+    margin-bottom: 15px; /* Mantener margen */
+    display: flex; /* Ahora este es un flex container */
+    flex-direction: column; /* Lo mantenemos así, para que el player-main-controls se apile con el resto del player-controls */
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Modificación para el ícono del menú (si quieres que tenga el mismo estilo 3D) */
+.menu-icon i {
+    color: var(--text-color); /* Color blanco por defecto, puedes cambiarlo a --primary-blue */
+    font-size: 28px;
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.3),
+        -1px -1px 2px rgba(255, 255, 255, 0.1);
+}
 /* --- PIE DE PÁGINA --- */
 .app-footer {
     padding: 10px 20px;
@@ -259,15 +439,10 @@ body {
 
 .social-icons {
     display: flex;
-    /* Cambia de 'center' a una de las siguientes opciones: */
     justify-content: space-around;
-    /* Prueba con esta primero */
-    /* o si prefieres que los extremos toquen los bordes, usa: */
-    /* justify-content: space-between; */
     align-items: center;
     gap: 25px; /* Puedes ajustar este valor si necesitas más o menos espacio entre iconos */
     width: 100%;
-    /* Asegúrate de que ocupe todo el ancho disponible */
 }
 
 .social-icons a {
@@ -343,7 +518,7 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    line-height: 1; /* Para centrar el caracter 'x' */
+    line-height: 1;
     padding: 5px;
     transition: 0.3s;
     outline: none;
@@ -874,4 +1049,90 @@ body {
         font-size: 0.75em;
         padding: 6px 10px;
     }
+}
+/* --- ESTILOS PARA EL ESPECTRO DE SONIDO ANIMADO --- */
+.audio-spectrum {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Alinea las barras a la parte inferior */
+    width: 100px; /* Ancho total del espectro */
+    height: 25px; /* Altura máxima del espectro */
+    margin-top: 20px; /* Espacio encima del espectro */
+    gap: 5px; /* Espacio entre las barras */
+}
+
+.audio-spectrum.hidden {
+    display: none !important;
+}
+
+.audio-spectrum .bar {
+    width: 10px;
+    height: 22px; /* <-- AÑADE ESTA LÍNEA (o el valor que prefieras como altura mínima) */
+    background-color: var(--text-color);
+    border-radius: 2px;
+    transform-origin: bottom;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* Definición de la animación para las barras */
+@keyframes spectrum-animation {
+    0% {
+        transform: scaleY(0.1);
+    }
+    50% {
+        transform: scaleY(1);
+    }
+    100% {
+        transform: scaleY(0.3);
+    }
+}
+
+/* Aplicar la animación a las barras individuales con diferentes retrasos/duraciones */
+.audio-spectrum.active .bar-1 {
+    animation-name: spectrum-animation;
+    animation-duration: 0.8s;
+    animation-delay: 0s;
+}
+
+.audio-spectrum.active .bar-2 {
+    animation-name: spectrum-animation;
+    animation-duration: 0.9s;
+    animation-delay: 0.2s;
+}
+
+.audio-spectrum.active .bar-3 {
+    animation-name: spectrum-animation;
+    animation-duration: 0.7s;
+    animation-delay: 0.1s;
+}
+/* --- ESTILOS PARA EL ICONO DE COMPARTIR --- */
+.share-icon {
+    font-size: 28px; /* Mismo tamaño que el icono del menú */
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    color: var(--text-color); /* Color del icono */
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.3),
+        -1px -1px 2px rgba(255, 255, 255, 0.1);
+    margin-left: auto; /* Empuja el icono a la derecha si no se usa space-between */
+}
+
+.share-icon i {
+    color: var(--text-color); /* Asegura el color blanco si el icono base es de otro color */
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.3),
+        -1px -1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Ajustes para pantallas pequeñas (móviles) si es necesario */
+@media (max-width: 600px) {
+    .share-icon {
+        font-size: 26px; /* Ligeramente más pequeño en móviles si se desea */
+    }
+}
+.share-icon i::before {
+    pointer-events: none;
 }
