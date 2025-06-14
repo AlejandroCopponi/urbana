@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval;
     let timerTimeout;
     let alarmTimeout;
-    let isAlarmActive = false;
+    let isAlarmActive = false; // Estado local, no se persiste
 
     // Custom Alert Modal Elements (Se inicializan y adjuntan al DOM aquí, una vez)
     // Es crucial que customAlertDialog sea declarado como 'let' y no 'const' aquí si se va a reasignar
@@ -738,8 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showCustomAlert('Temporizador de apagado cancelado.');
             console.log('Temporizador de apagado cancelado.');
             selectionPanel.classList.remove('open');
-            // Si cancelas el timer y la radio estaba sonando, el espectro debería seguir activo
-            // Si la radio no estaba sonando, ya estaba oculto.
+            // Si la radio estaba sonando, el espectro debería seguir activo
             if (isPlaying && audioSpectrum) {
                  audioSpectrum.classList.remove('hidden');
                  audioSpectrum.classList.add('active');
@@ -748,20 +747,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica del Panel de Alarma ---
+    // NO se usa localStorage para la alarma
+    
+    // Función para verificar y ejecutar la alarma (solo si la app está abierta)
+    // No es necesario llamar a checkAndTriggerAlarm() al cargar, ya que no hay persistencia.
+
     if (alarmOptionInMenu && alarmPanel && alarmSetTimeInput && setAlarmBtn && cancelAlarmBtn) {
         alarmOptionInMenu.addEventListener('click', () => {
             openPanel(alarmPanel);
 
-            if (!isAlarmActive) {
-                cancelAlarmBtn.classList.add('hidden');
-            } else {
-                cancelAlarmBtn.classList.remove('hidden');
-            }
-
+            // Cargar la hora por defecto o la última establecida en la sesión actual
             const defaultAlarmHour = 7;
             const defaultAlarmMinute = 0;
             const defaultAlarmTime = `${String(defaultAlarmHour).padStart(2, '0')}:${String(defaultAlarmMinute).padStart(2, '0')}`;
             alarmSetTimeInput.value = defaultAlarmTime;
+            
+            // Actualizar visibilidad del botón cancelar basada en el estado de la sesión
+            if (isAlarmActive) {
+                cancelAlarmBtn.classList.remove('hidden');
+            } else {
+                cancelAlarmBtn.classList.add('hidden');
+            }
         });
     }
 
@@ -787,6 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let targetDate = new Date();
             targetDate.setHours(targetHour, targetMinute, 0, 0);
 
+            // Si la hora de la alarma es hoy pero ya pasó, programarla para mañana
             if (targetDate.getTime() <= now.getTime()) {
                 targetDate.setDate(targetDate.getDate() + 1);
             }
@@ -797,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            clearTimeout(alarmTimeout);
+            clearTimeout(alarmTimeout); // Limpiar cualquier alarma previa
 
             alarmTimeout = setTimeout(() => {
                 console.log('¡Alarma sonando! Intentando reproducir la radio.');
@@ -809,7 +816,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
                             playPauseBtn.classList.remove('play-button');
                             playPauseBtn.classList.add('pause-button');
-                            // MOSTRAR Y ACTIVAR ESPECTRO: Alarma activa y reproduce
                             if (audioSpectrum) {
                                 audioSpectrum.classList.remove('hidden');
                                 audioSpectrum.classList.add('active');
@@ -819,7 +825,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         .catch(error => {
                             console.error('Error al reproducir la radio con la alarma:', error);
                             showCustomAlert('¡Es hora! Pero no se pudo encender la radio. Revisa la consola.');
-                            // OCULTAR Y DESACTIVAR ESPECTRO: Alarma falla al reproducir
                             if (audioSpectrum) {
                                 audioSpectrum.classList.add('hidden');
                                 audioSpectrum.classList.remove('active');
@@ -828,12 +833,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     showCustomAlert('¡Es hora! La radio ya estaba sonando.');
                 }
-                isAlarmActive = false;
-                cancelAlarmBtn.classList.add('hidden');
+                isAlarmActive = false; // Desactivar la alarma después de sonar
+                cancelAlarmBtn.classList.add('hidden'); // Ocultar botón de cancelar
             }, timeDiffMs);
 
-            isAlarmActive = true;
-            cancelAlarmBtn.classList.remove('hidden');
+            isAlarmActive = true; // Activar la alarma para la sesión actual
+            cancelAlarmBtn.classList.remove('hidden'); // Mostrar botón de cancelar
             showCustomAlert(`Alarma establecida para las ${timeValue}.`);
             console.log(`Alarma establecida para las ${timeValue}.`);
             alarmPanel.classList.remove('open');
@@ -843,7 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelAlarmBtn && alarmPanel) {
         cancelAlarmBtn.addEventListener('click', () => {
             clearTimeout(alarmTimeout);
-            isAlarmActive = false;
+            isAlarmActive = false; // Desactivar la alarma
             cancelAlarmBtn.classList.add('hidden');
             showCustomAlert('Alarma cancelada.');
             console.log('Alarma cancelada.');
@@ -954,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentDay = now.getDay();
 
         let activeSchedule = [];
-        let currentProgramName = 'Programación Desconocida';
+        let currentProgramName = 'Lo mejor de Urbana';
 
         if (currentDay >= 1 && currentDay <= 5) {
             activeSchedule = weekdaySchedule;
@@ -983,6 +988,125 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateProgram();
     setInterval(updateProgram, 60 * 1000);
+
+    // --- Lógica de Notificaciones Push ---
+    async function setupPushNotifications() {
+        // 1. Verificar si el navegador soporta Service Workers y Push API
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+            console.warn('Notificaciones Push no soportadas por este navegador.');
+            // showCustomAlert('Las notificaciones push no son compatibles con este navegador.');
+            return;
+        }
+
+        try {
+            // 2. Obtener el registro del Service Worker
+            const registration = await navigator.serviceWorker.ready;
+            console.log('Service Worker listo para Push:', registration);
+
+            // 3. Verificar el estado actual del permiso de notificaciones
+            let permissionState = Notification.permission;
+            console.log('Estado actual del permiso de notificación:', permissionState);
+
+            if (permissionState === 'denied') {
+                console.warn('Permiso de notificaciones denegado por el usuario.');
+                showCustomAlert('No podemos enviarte notificaciones push porque las bloqueaste. Puedes cambiarlas en la configuración de tu navegador.');
+                return;
+            }
+
+            // 4. Si el permiso no ha sido concedido (o es 'default'), solicitarlo
+            if (permissionState === 'default') {
+                const permission = await Notification.requestPermission();
+                if (permission === 'denied') {
+                    console.warn('Permiso de notificaciones denegado al solicitar.');
+                    showCustomAlert('Has denegado el permiso para recibir notificaciones. No podremos enviarte alertas.');
+                    return;
+                }
+            }
+
+            // 5. Intentar obtener una suscripción existente
+            const existingSubscription = await registration.pushManager.getSubscription();
+
+            if (existingSubscription) {
+                console.log('Suscripción Push existente encontrada:', existingSubscription);
+                // Si ya existe una suscripción, puedes enviarla a tu servidor si aún no lo has hecho
+                sendSubscriptionToServer(existingSubscription); // AHORA SÍ, SE ENVÍA LA SUSCRIPCIÓN
+            } else {
+                console.log('No se encontró suscripción Push existente. Creando una nueva...');
+                // 6. Crear una nueva suscripción
+                // Se necesita una 'applicationServerKey' para VAPID.
+                // Esta clave pública es la que generaste en tu servidor.
+                const applicationServerKey = 'BJEyQla7wjyWTmrB44rbYivG_j94zFWKK0ABAU3eWWbGXz6jQgvhnUjHPcX4smFQLqcXWdsptFm5LiHYOsg1xZI'; // CLAVE PÚBLICA VAPID REAL
+                const convertedVapidKey = urlBase64ToUint8Array(applicationServerKey);
+
+                const newSubscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidKey
+                });
+                console.log('Nueva suscripción Push creada:', newSubscription);
+                showCustomAlert('¡Excelente! Recibirás notificaciones de Estación Urbana.');
+
+                // 7. Enviar la nueva suscripción a tu servidor
+                sendSubscriptionToServer(newSubscription); // AHORA SÍ, SE ENVÍA LA SUSCRIPCIÓN
+            }
+        } catch (error) {
+            console.error('Error al configurar notificaciones Push:', error);
+            showCustomAlert('Ocurrió un error al intentar configurar las notificaciones push.');
+        }
+    }
+
+    // Función auxiliar para convertir VAPID public key (no modificable, es estándar)
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    // --- Función para ENVIAR la Suscripción al Servidor (AHORA SE IMPLEMENTA) ---
+    async function sendSubscriptionToServer(subscription) {
+        // !IMPORTANTE: REEMPLAZA ESTA URL CON EL ENDPOINT REAL DE TU SERVIDOR
+        // Por ejemplo: 'https://tu-dominio.com/api/save-subscription'
+        // Si tu script se llama 'subscribe.php' y está en la raíz de public_html, sería 'https://appurbana.com.ar/subscribe.php'
+        // Si lo pones en una carpeta 'api' dentro de public_html, sería 'https://appurbana.com.ar/api/subscribe.php'
+        const SERVER_SUBSCRIPTION_URL = 'https://appurbana.com.ar/api/subscribe.php'; // <<< === REEMPLAZA ESTO CON TU RUTA REAL === >>>
+
+        try {
+            const response = await fetch(SERVER_SUBSCRIPTION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(subscription)
+            });
+
+            if (response.ok) {
+                console.log('Suscripción enviada al servidor con éxito.');
+            } else {
+                const errorData = await response.json(); // Intentar leer el cuerpo del error
+                console.error('Error al enviar la suscripción al servidor:', response.status, response.statusText, errorData);
+                showCustomAlert(`Hubo un problema al guardar tu preferencia de notificaciones: ${errorData.message || response.statusText}.`);
+            }
+        } catch (error) {
+            console.error('Error de red al enviar la suscripción al servidor:', error);
+            showCustomAlert('No se pudo conectar con el servidor para guardar tu preferencia de notificaciones. Revisa tu conexión.');
+        }
+    }
+
+
+    // Llama a la función para configurar las notificaciones push cuando la app esté lista
+    setupPushNotifications();
+    // También podrías adjuntarlo a un botón si prefieres que el usuario lo active manualmente:
+    // if (enablePushNotificationsBtn) {
+    //     enablePushNotificationsBtn.addEventListener('click', setupPushNotifications);
+    // }
 
 // --- Lógica del Botón Compartir ---
 if (shareIcon) {
@@ -1023,4 +1147,7 @@ if (shareIcon) {
 }
 
 });
+
+
+
 

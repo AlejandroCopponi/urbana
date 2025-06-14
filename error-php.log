@@ -1,0 +1,69 @@
+[14-Jun-2025 10:08:56 America/Argentina/Buenos_Aires] PHP Warning:  require(/home/c2761433/public_html/api/../vendor/WebPush/WebPush.php): Failed to open stream: No such file or directory in /home/c2761433/public_html/api/send_notification.php on line 5
+[14-Jun-2025 10:08:56 America/Argentina/Buenos_Aires] PHP Warning:  require(/home/c2761433/public_html/api/../vendor/WebPush/WebPush.php): Failed to open stream: No such file or directory in /home/c2761433/public_html/api/send_notification.php on line 5
+[14-Jun-2025 10:08:56 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Failed opening required '/home/c2761433/public_html/api/../vendor/WebPush/WebPush.php' (include_path='.:/opt/php8-3/lib/php') in /home/c2761433/public_html/api/send_notification.php:5
+Stack trace:
+#0 {main}
+  thrown in /home/c2761433/public_html/api/send_notification.php on line 5
+[14-Jun-2025 10:11:04 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Interface "Minishlink\WebPush\SubscriptionInterface" not found in /home/c2761433/public_html/vendor/Subscription.php:16
+Stack trace:
+#0 /home/c2761433/public_html/api/send_notification.php(6): require()
+#1 {main}
+  thrown in /home/c2761433/public_html/vendor/Subscription.php on line 16
+[14-Jun-2025 10:19:58 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Base64Url\Base64Url" not found in /home/c2761433/public_html/vendor/VAPID.php:64
+Stack trace:
+#0 /home/c2761433/public_html/vendor/WebPush.php(69): Minishlink\WebPush\VAPID::validate(Array)
+#1 /home/c2761433/public_html/api/send_notification.php(119): Minishlink\WebPush\WebPush->__construct(Array)
+#2 {main}
+  thrown in /home/c2761433/public_html/vendor/VAPID.php on line 64
+[14-Jun-2025 10:27:48 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Base64Url\Base64Url" not found in /home/c2761433/public_html/vendor/VAPID.php:64
+Stack trace:
+#0 /home/c2761433/public_html/vendor/WebPush.php(69): Minishlink\WebPush\VAPID::validate(Array)
+#1 /home/c2761433/public_html/api/send_notification.php(119): Minishlink\WebPush\WebPush->__construct(Array)
+#2 {main}
+  thrown in /home/c2761433/public_html/vendor/VAPID.php on line 64
+[14-Jun-2025 10:32:08 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Base64Url\Base64Url" not found in /home/c2761433/public_html/vendor/VAPID.php:64
+Stack trace:
+#0 /home/c2761433/public_html/vendor/WebPush.php(69): Minishlink\WebPush\VAPID::validate(Array)
+#1 /home/c2761433/public_html/api/send_notification.php(119): Minishlink\WebPush\WebPush->__construct(Array)
+#2 {main}
+  thrown in /home/c2761433/public_html/vendor/VAPID.php on line 64
+[14-Jun-2025 10:33:30 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught ErrorException: [VAPID] Private key should be 32 bytes long when decoded. in /home/c2761433/public_html/vendor/VAPID.php:77
+Stack trace:
+#0 /home/c2761433/public_html/vendor/WebPush.php(69): Minishlink\WebPush\VAPID::validate(Array)
+#1 /home/c2761433/public_html/api/send_notification.php(118): Minishlink\WebPush\WebPush->__construct(Array)
+#2 {main}
+  thrown in /home/c2761433/public_html/vendor/VAPID.php on line 77
+[14-Jun-2025 10:37:41 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "GuzzleHttp\Client" not found in /home/c2761433/public_html/vendor/WebPush.php:79
+Stack trace:
+#0 /home/c2761433/public_html/api/send_notification.php(118): Minishlink\WebPush\WebPush->__construct(Array)
+#1 {main}
+  thrown in /home/c2761433/public_html/vendor/WebPush.php on line 79
+[14-Jun-2025 13:11:27 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Minishlink\WebPush\Subscription" not found in /home/c2761433/public_html/api/send_notification.php:93
+Stack trace:
+#0 {main}
+  thrown in /home/c2761433/public_html/api/send_notification.php on line 93
+[14-Jun-2025 13:11:44 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Minishlink\WebPush\Subscription" not found in /home/c2761433/public_html/api/send_notification.php:93
+Stack trace:
+#0 {main}
+  thrown in /home/c2761433/public_html/api/send_notification.php on line 93
+[14-Jun-2025 13:11:53 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Minishlink\WebPush\Subscription" not found in /home/c2761433/public_html/api/send_notification.php:93
+Stack trace:
+#0 {main}
+  thrown in /home/c2761433/public_html/api/send_notification.php on line 93
+[14-Jun-2025 13:14:35 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/eu4yl0PObD0:APA91bENj6oTZ4oh6r_8sSRkIMAm78-yRRU-GiJquv-MWAl92l-wpwnXtZn1_aNN0NPhvgPtP8lWYKhLSOiMufdvYiJuZjJ8mzqelLp2CBXCs-adFmvUlOZ3LFZcsryPrFL6itTg4qYi: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 13:14:35 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cv9AG17qDDc:APA91bEaVVeMUt1RARpTvgVd6podvp2tNmu-d1MSAemss15s7VxUBhJ0izzEhhgslLjwWgbHDZEpViUlEKoZ7K07BJ8xZ-EfKHKh3opuI1q_UFXcHCU5ikVJ6su4ncWrH9qGaBmtEXmL: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 13:27:17 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/eu4yl0PObD0:APA91bENj6oTZ4oh6r_8sSRkIMAm78-yRRU-GiJquv-MWAl92l-wpwnXtZn1_aNN0NPhvgPtP8lWYKhLSOiMufdvYiJuZjJ8mzqelLp2CBXCs-adFmvUlOZ3LFZcsryPrFL6itTg4qYi: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 13:27:17 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cv9AG17qDDc:APA91bEaVVeMUt1RARpTvgVd6podvp2tNmu-d1MSAemss15s7VxUBhJ0izzEhhgslLjwWgbHDZEpViUlEKoZ7K07BJ8xZ-EfKHKh3opuI1q_UFXcHCU5ikVJ6su4ncWrH9qGaBmtEXmL: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:30:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/eu4yl0PObD0:APA91bENj6oTZ4oh6r_8sSRkIMAm78-yRRU-GiJquv-MWAl92l-wpwnXtZn1_aNN0NPhvgPtP8lWYKhLSOiMufdvYiJuZjJ8mzqelLp2CBXCs-adFmvUlOZ3LFZcsryPrFL6itTg4qYi: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:30:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cv9AG17qDDc:APA91bEaVVeMUt1RARpTvgVd6podvp2tNmu-d1MSAemss15s7VxUBhJ0izzEhhgslLjwWgbHDZEpViUlEKoZ7K07BJ8xZ-EfKHKh3opuI1q_UFXcHCU5ikVJ6su4ncWrH9qGaBmtEXmL: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:30:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cRgWZX-6inw:APA91bHrWY_wW2zg0pbkmACkRRkQsxsms1B4B3uNoBkZatnHMKgB0PGghE2uKczM9RkiQPr5wBglRVLMXYZRrgDGncbzKxy-IER1FKJo4xhaw9PvHh7r9wfOLK918dWkPcfjM40l3jl0: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:31:06 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/eu4yl0PObD0:APA91bENj6oTZ4oh6r_8sSRkIMAm78-yRRU-GiJquv-MWAl92l-wpwnXtZn1_aNN0NPhvgPtP8lWYKhLSOiMufdvYiJuZjJ8mzqelLp2CBXCs-adFmvUlOZ3LFZcsryPrFL6itTg4qYi: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:31:06 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cv9AG17qDDc:APA91bEaVVeMUt1RARpTvgVd6podvp2tNmu-d1MSAemss15s7VxUBhJ0izzEhhgslLjwWgbHDZEpViUlEKoZ7K07BJ8xZ-EfKHKh3opuI1q_UFXcHCU5ikVJ6su4ncWrH9qGaBmtEXmL: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:31:06 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cRgWZX-6inw:APA91bHrWY_wW2zg0pbkmACkRRkQsxsms1B4B3uNoBkZatnHMKgB0PGghE2uKczM9RkiQPr5wBglRVLMXYZRrgDGncbzKxy-IER1FKJo4xhaw9PvHh7r9wfOLK918dWkPcfjM40l3jl0: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:31:15 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/eu4yl0PObD0:APA91bENj6oTZ4oh6r_8sSRkIMAm78-yRRU-GiJquv-MWAl92l-wpwnXtZn1_aNN0NPhvgPtP8lWYKhLSOiMufdvYiJuZjJ8mzqelLp2CBXCs-adFmvUlOZ3LFZcsryPrFL6itTg4qYi: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:31:15 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cv9AG17qDDc:APA91bEaVVeMUt1RARpTvgVd6podvp2tNmu-d1MSAemss15s7VxUBhJ0izzEhhgslLjwWgbHDZEpViUlEKoZ7K07BJ8xZ-EfKHKh3opuI1q_UFXcHCU5ikVJ6su4ncWrH9qGaBmtEXmL: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:31:15 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cRgWZX-6inw:APA91bHrWY_wW2zg0pbkmACkRRkQsxsms1B4B3uNoBkZatnHMKgB0PGghE2uKczM9RkiQPr5wBglRVLMXYZRrgDGncbzKxy-IER1FKJo4xhaw9PvHh7r9wfOLK918dWkPcfjM40l3jl0: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:32:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/eu4yl0PObD0:APA91bENj6oTZ4oh6r_8sSRkIMAm78-yRRU-GiJquv-MWAl92l-wpwnXtZn1_aNN0NPhvgPtP8lWYKhLSOiMufdvYiJuZjJ8mzqelLp2CBXCs-adFmvUlOZ3LFZcsryPrFL6itTg4qYi: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:32:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cv9AG17qDDc:APA91bEaVVeMUt1RARpTvgVd6podvp2tNmu-d1MSAemss15s7VxUBhJ0izzEhhgslLjwWgbHDZEpViUlEKoZ7K07BJ8xZ-EfKHKh3opuI1q_UFXcHCU5ikVJ6su4ncWrH9qGaBmtEXmL: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:32:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/cRgWZX-6inw:APA91bHrWY_wW2zg0pbkmACkRRkQsxsms1B4B3uNoBkZatnHMKgB0PGghE2uKczM9RkiQPr5wBglRVLMXYZRrgDGncbzKxy-IER1FKJo4xhaw9PvHh7r9wfOLK918dWkPcfjM40l3jl0: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
+[14-Jun-2025 14:32:21 America/Argentina/Buenos_Aires] Error al enviar notificación a https://fcm.googleapis.com/fcm/send/fxGKmuDIfe0:APA91bFzAVbN2Mf5fMEPBBL2I0tN9lpgqNZSkvi8VK6364uelNTeD3WSsF3d63ndQvIR3xyQJJ9iaZR6BbdV2uFIu6AYG-ApjIQt3B7OcO-PaVC2MzX3wM6Zs9loMDT5BdpVRRfwV0c2: Call to undefined method Minishlink\WebPush\WebPush::sendNotification()
