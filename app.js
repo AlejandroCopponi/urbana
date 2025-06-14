@@ -124,9 +124,11 @@ if (customInstallButton) {
             console.log('El evento beforeinstallprompt no está disponible o ya se usó (desde overlay). Proporcionando instrucciones manuales.');
             const isIOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
             if (isIOS) {
-                alert('Para instalar "Estación Urbana 104.7" en tu iPhone o iPad:\n\n1. Toca el icono de "Compartir" (un cuadrado con una flecha hacia arriba) en la barra inferior de Safari.\n\n2. Desliza hacia abajo y selecciona "Añadir a pantalla de inicio".');
+                // Modified to use custom modal instead of alert
+                showCustomAlert('Para instalar "Estación Urbana 104.7" en tu iPhone o iPad:\n\n1. Toca el icono de "Compartir" (un cuadrado con una flecha hacia arriba) en la barra inferior de Safari.\n\n2. Desliza hacia abajo y selecciona "Añadir a pantalla de inicio".');
             } else {
-                alert('Tu navegador no permite la instalación directa en este momento. Por favor, busca la opción "Añadir a pantalla de inicio" o "Instalar aplicación" en el menú de tu navegador (generalmente los 3 puntos en la esquina).');
+                // Modified to use custom modal instead of alert
+                showCustomAlert('Tu navegador no permite la instalación directa en este momento. Por favor, busca la opción "Añadir a pantalla de inicio" o "Instalar aplicación" en el menú de tu navegador (generalmente los 3 puntos en la esquina).');
             }
         }
     });
@@ -141,6 +143,11 @@ window.addEventListener('appinstalled', () => {
     showMainAppUI(); // Asegura que la UI principal se muestre
 });
 // --- Fin de la lógica para el overlay de instalación de PWA ---
+
+// Referencias a los elementos del modal de alerta personalizado
+let customAlertDialog;
+let customAlertMessage;
+let customAlertCloseButton;
 
 document.addEventListener('DOMContentLoaded', () => {
     // TODAS LAS REFERENCIAS A ELEMENTOS DEL DOM DEBEN IR DENTRO DE ESTE BLOQUE
@@ -200,6 +207,43 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerTimeout;
     let alarmTimeout;
     let isAlarmActive = false;
+
+    // Custom Alert Modal Elements (Se inicializan y adjuntan al DOM aquí, una vez)
+    // Es crucial que customAlertDialog sea declarado como 'let' y no 'const' aquí si se va a reasignar
+    // Si ya está declarada globalmente arriba, entonces solo se asigna el valor.
+    if (!customAlertDialog) { // Previene la recreación si ya existe
+        customAlertDialog = document.createElement('div');
+        customAlertDialog.id = 'customAlertDialog';
+        customAlertDialog.className = 'custom-alert-dialog hidden';
+        customAlertDialog.innerHTML = `
+            <div class="custom-alert-content">
+                <p id="customAlertMessage"></p>
+                <button id="customAlertCloseButton">OK</button>
+            </div>
+        `;
+        document.body.appendChild(customAlertDialog);
+
+        // Obtener referencias a los elementos internos del modal DESPUÉS de haberlo añadido al DOM
+        customAlertMessage = document.getElementById('customAlertMessage');
+        customAlertCloseButton = document.getElementById('customAlertCloseButton');
+
+        if (customAlertCloseButton) {
+            customAlertCloseButton.addEventListener('click', () => {
+                customAlertDialog.classList.add('hidden');
+            });
+        }
+    }
+
+
+    // Función para mostrar el modal de alerta personalizado
+    function showCustomAlert(message) {
+        if (customAlertMessage && customAlertDialog) { // Se asegura que existan antes de usarlos
+            customAlertMessage.textContent = message;
+            customAlertDialog.classList.remove('hidden');
+            // Se asegura de que el foco esté en el botón para accesibilidad
+            customAlertCloseButton.focus();
+        }
+    }
 
     // NUEVO: Asegurarse de que el espectro esté oculto al cargar, hasta que se reproduzca
     if (audioSpectrum) {
@@ -310,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(error => {
                         console.error("Error al intentar reproducir la radio tras interacción:", error.name, error.message);
-                        alert("No se pudo iniciar la reproducción. Por favor, inténtalo de nuevo o revisa tu conexión.");
+                        showCustomAlert("No se pudo iniciar la reproducción. Por favor, inténtalo de nuevo o revisa tu conexión.");
                         isPlaying = false;
                         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
                         playPauseBtn.classList.remove('pause-button');
@@ -338,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 default: errorMessage = `Código de error: ${e.target.error.code}. Mensaje: ${e.target.error.message}`; break;
             }
             console.error("Mensaje de error detallado:", errorMessage);
-            alert("Hubo un error con el stream de radio: " + errorMessage + " Consulta la Consola (F12) para más detalles.");
+            showCustomAlert("Hubo un error con el stream de radio: " + errorMessage + " Consulta la Consola (F12) para más detalles.");
             isPlaying = false;
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             playPauseBtn.classList.remove('pause-button');
@@ -627,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (setTimerByTimeBtn && timerSetTimeInput && radioStream && playPauseBtn && mainAppTimerCountdown && cancelTimerBtn && selectionPanel) {
         setTimerByTimeBtn.addEventListener('click', () => {
             const timeValue = timerSetTimeInput.value;
-            if (!timeValue) { alert('Por favor, selecciona una hora para el temporizador.'); return; }
+            if (!timeValue) { showCustomAlert('Por favor, selecciona una hora para el temporizador.'); return; }
 
             const [hoursStr, minutesStr] = timeValue.split(':');
             const targetHour = parseInt(hoursStr, 10);
@@ -640,7 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetDate.getTime() <= now.getTime()) { targetDate.setDate(targetDate.getDate() + 1); }
 
             const timeDiffMs = targetDate.getTime() - now.getTime();
-            if (timeDiffMs <= 0) { alert('La hora seleccionada ya pasó. Intenta de nuevo.'); return; }
+            if (timeDiffMs <= 0) { showCustomAlert('La hora seleccionada ya pasó. Intenta de nuevo.'); return; }
 
             clearInterval(countdownInterval);
             clearTimeout(timerTimeout);
@@ -658,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     audioSpectrum.classList.remove('active');
                 }
                 console.log('Radio apagada por temporizador.');
-                alert('El temporizador ha apagado la radio.');
+                showCustomAlert('El temporizador ha apagado la radio.');
                 clearInterval(countdownInterval);
             }, timeDiffMs);
             let remainingTime = timeDiffMs;
@@ -672,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearInterval(countdownInterval);
                 } else {
                     const totalSeconds = Math.floor(remainingTime / 1000);
-                    const hours = Math.floor(totalSeconds / 3600);
+                    const hours = Math.floor((totalSeconds % 3600) / 60);
                     const minutes = Math.floor((totalSeconds % 3600) / 60);
                     const seconds = totalSeconds % 60;
                     const displayTime = [hours, minutes, seconds].map(t => String(t).padStart(2, '0')).join(':');
@@ -680,7 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, 1000);
             selectionPanel.classList.remove('open');
-            alert(`Temporizador de apagado configurado para las ${timeValue}.`);
+            showCustomAlert(`Temporizador de apagado configurado para las ${timeValue}.`);
             console.log(`Temporizador de apagado configurado para las ${timeValue}.`);
         });
     }
@@ -691,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(timerTimeout);
             mainAppTimerCountdown.classList.add('hidden');
             cancelTimerBtn.classList.add('hidden');
-            alert('Temporizador de apagado cancelado.');
+            showCustomAlert('Temporizador de apagado cancelado.');
             console.log('Temporizador de apagado cancelado.');
             selectionPanel.classList.remove('open');
             // Si cancelas el timer y la radio estaba sonando, el espectro debería seguir activo
@@ -731,7 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setAlarmBtn.addEventListener('click', () => {
             const timeValue = alarmSetTimeInput.value;
             if (!timeValue) {
-                alert('Por favor, selecciona una hora para la alarma.');
+                showCustomAlert('Por favor, selecciona una hora para la alarma.');
                 return;
             }
 
@@ -749,7 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const timeDiffMs = targetDate.getTime() - now.getTime();
             if (timeDiffMs <= 0) {
-                alert('La hora seleccionada ya pasó. Intenta de nuevo.');
+                showCustomAlert('La hora seleccionada ya pasó. Intenta de nuevo.');
                 return;
             }
 
@@ -770,11 +814,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 audioSpectrum.classList.remove('hidden');
                                 audioSpectrum.classList.add('active');
                             }
-                            alert('¡Es hora! La radio se ha encendido.');
+                            showCustomAlert('¡Es hora! La radio se ha encendido.');
                         })
                         .catch(error => {
                             console.error('Error al reproducir la radio con la alarma:', error);
-                            alert('¡Es hora! Pero no se pudo encender la radio. Revisa la consola.');
+                            showCustomAlert('¡Es hora! Pero no se pudo encender la radio. Revisa la consola.');
                             // OCULTAR Y DESACTIVAR ESPECTRO: Alarma falla al reproducir
                             if (audioSpectrum) {
                                 audioSpectrum.classList.add('hidden');
@@ -782,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         });
                 } else {
-                    alert('¡Es hora! La radio ya estaba sonando.');
+                    showCustomAlert('¡Es hora! La radio ya estaba sonando.');
                 }
                 isAlarmActive = false;
                 cancelAlarmBtn.classList.add('hidden');
@@ -790,7 +834,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             isAlarmActive = true;
             cancelAlarmBtn.classList.remove('hidden');
-            alert(`Alarma establecida para las ${timeValue}.`);
+            showCustomAlert(`Alarma establecida para las ${timeValue}.`);
             console.log(`Alarma establecida para las ${timeValue}.`);
             alarmPanel.classList.remove('open');
         });
@@ -801,7 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(alarmTimeout);
             isAlarmActive = false;
             cancelAlarmBtn.classList.add('hidden');
-            alert('Alarma cancelada.');
+            showCustomAlert('Alarma cancelada.');
             console.log('Alarma cancelada.');
             alarmPanel.classList.remove('open');
             // Si la alarma se cancela, el espectro debería seguir el estado actual de isPlaying
@@ -959,16 +1003,24 @@ if (shareIcon) {
         } else {
             // Fallback para navegadores que no soportan la Web Share API
             console.warn('Web Share API no soportada. Usando fallback.');
-            alert('Descargá la App de Estación Urbana: https://appurbana.com.ar');
-            // Opcional: Podrías copiar la URL al portapapeles aquí para navegadores de escritorio.
-            navigator.clipboard.writeText('Descargá la App de Estación Urbana: https://appurbana.com.ar').then(() => {
-             alert('¡Enlace copiado al portapapeles! Descargá la App de Estación Urbana: https://appurbana.com.ar');
-            }).catch(err => {
-            console.error('Error al copiar al portapapeles:', err);
-             alert('Descargá la App de Estación Urbana: https://appurbana.com.ar');
-            });
+            // Intentar copiar al portapapeles y luego mostrar el mensaje
+            const urlToCopy = 'https://appurbana.com.ar';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText('¡Descargá la App de Estación Urbana y escuchanos donde estés! 🎧 ' + urlToCopy)
+                    .then(() => {
+                        showCustomAlert('¡Enlace copiado al portapapeles! Descargá la App de Estación Urbana: ' + urlToCopy);
+                    })
+                    .catch(err => {
+                        console.error('Error al copiar al portapapeles:', err);
+                        showCustomAlert('Descargá la App de Estación Urbana: ' + urlToCopy);
+                    });
+            } else {
+                // Fallback si navigator.clipboard no está disponible (menos común ahora)
+                showCustomAlert('Descargá la App de Estación Urbana: ' + urlToCopy);
+            }
         }
     });
 }
 
 });
+

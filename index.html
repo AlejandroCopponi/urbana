@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- MODIFICADO: user-scalable=no y maximum-scale=1.0 para evitar el zoom y comportarse más como una app nativa -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Estación Urbana 104.7</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="/manifest.json">
@@ -30,7 +31,7 @@
             <div class="container">
                 <header class="app-header">
                     <div class="menu-icon" id="menu-icon"> <i class="fas fa-bars"></i> </div>
-                     <div class="share-icon" id="share-icon"> <i class="fas fa-share-alt"></i> </div>
+                    <div class="share-icon" id="share-icon"> <i class="fas fa-share-alt"></i> </div>
                 </header>
 
                 <main class="main-content">
@@ -63,11 +64,11 @@
                     <div class="publicitar-button-container">
                         <a href="#" id="main-publicity-button" class="publicitar-btn">PUBLICITAR</a>
                     </div>
-                     <div id="audio-spectrum" class="audio-spectrum hidden">
-                <div class="bar bar-1"></div>
-                <div class="bar bar-2"></div>
-                <div class="bar bar-3"></div>
-            </div>
+                    <div id="audio-spectrum" class="audio-spectrum hidden">
+                        <div class="bar bar-1"></div>
+                        <div class="bar bar-2"></div>
+                        <div class="bar bar-3"></div>
+                    </div>
                 </main>
 
                 <footer class="app-footer">
@@ -139,16 +140,16 @@
                     <p id="contact-form-status"></p>
                 </div>
             </div>
-        </div> <div id="installPromptOverlay" class="install-overlay hidden">
+        </div>
+        <div id="installPromptOverlay" class="install-overlay hidden">
             <div class="install-content">
                 <h2>Instala la App de Estación Urbana 104.7</h2>
                 <p>Presiona INSTALAR para tener la app en tu dispositivo móvil o PC.</p>
-                
                 <button id="customInstallButton" class="install-button">Instalar App</button>
-                
             </div>
         </div>
-    </div> <audio id="radio-stream" src="https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream" preload="none"></audio>
+    </div>
+    <audio id="radio-stream" src="https://streaming2.locucionar.com/proxy/estacionurbana?mp=/stream" preload="none"></audio>
     <script src="app.js"></script>
 </body>
 </html>
